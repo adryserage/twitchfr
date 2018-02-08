@@ -1,0 +1,78 @@
+
+body,div,fieldset,input,img,a,a:hover,select,li ,ul, p, h1, h2, h3, h4, h5, h6, iframe
+{
+	margin:0;
+	padding:0;
+	border:0;
+	text-decoration:none;
+	outline:none;
+	list-style:none;
+	vertical-align:bottom;
+	white-space:normal;
+}
+
+/* CENTRAGE */
+
+.global {width:80% !important; position:relative; z-index:1; margin:auto;} 
+
+
+/* ANIMATION */
+
+.anim {-khtml-transition: 0.4s; -ie-transition: 0.4s; -o-transition: 0.4s; -moz-transition: 0.4s; -webkit-transition: 0.4s; transition: 0.4s;}
+
+
+/* CLEAR */
+
+.clear {clear: both;}
+
+/* BODY */
+
+body { background: #f2f2f2 url('images/bg-tile.png'); font-size: 16px; padding-bottom: 65px; }
+
+/* HEADER */
+
+header img {padding-top: 30px; float: left;}
+header ul {float: right; margin-top: 55px;}
+header ul li {display: inline-block; font-family: 'Open Sans'; font-size: 1em; text-transform: uppercase; margin-left: 30px; font-weight: 400;}
+header ul li a {color: #000;}
+header ul li:hover {font-weight: 700;}
+header h1 {font-family: 'Open Sans'; font-size: 1.7em; color: #000; font-weight: 300; text-transform: uppercase; margin: 3% 0; float: left;}
+span {font-weight: 700; color: #ee4630;}
+header .rs {margin: 1.7% 0;}
+header .rs li {margin-left: 8px;}
+
+/* TV */
+
+.player {width: 75%; height: 600px; margin-right: -4px; margin-bottom: 3%}
+.chat {width: 25%; height: 600px; margin-bottom: 3%;}
+#counter {float: right; font-family: 'Open Sans'; font-size: 1.3em; color: #000; font-weight: 400; text-transform: uppercase; margin-top: 10px; margin-bottom: 3%;}
+.donation {margin-bottom: 3%;}
+.cinema {margin-bottom: 3%;}
+
+/* BOUTON */
+
+.btn {display: inline-block; width: 250px; height: 60px; font-family: 'Open Sans'; font-size: 1em; color: #FFF; text-align: center; line-height: 60px; text-transform: uppercase; font-weight: 700;
+  background: -webkit-linear-gradient(90deg, #EB3349 10%, #F45C43 90%); /* Chrome 10+, Saf5.1+ */
+  background:    -moz-linear-gradient(90deg, #EB3349 10%, #F45C43 90%); /* FF3.6+ */
+  background:     -ms-linear-gradient(90deg, #EB3349 10%, #F45C43 90%); /* IE10 */
+  background:      -o-linear-gradient(90deg, #EB3349 10%, #F45C43 90%); /* Opera 11.10+ */
+  background:         linear-gradient(90deg, #EB3349 10%, #F45C43 90%); /* W3C */}
+
+
+
+/* A PROPOS */
+
+#about p {font-family: 'Open Sans'; font-size: 1em; color: #000; text-align: center; margin-bottom: 3%;}
+
+/* CONTACT */
+
+#contact h2 {font-family: 'Open Sans'; font-size: 1.7em; color: #000; font-weight: 300; text-transform: uppercase; text-align: center; margin-bottom: 3%;}
+#contact p {text-align: center;}
+#contact .contactlink {font-family: 'Open Sans'; font-size: 2em; color: #000; font-weight: 700; text-transform: uppercase; margin-bottom: 3%; text-align: center;}
+
+/* FOOTER */
+
+footer p {text-align: center; font-family: 'Open Sans'; font-size: 1em; color: #000; margin:3% 0 5% 0;}
+
+
+

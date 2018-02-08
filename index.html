@@ -1,0 +1,109 @@
+<!Doctype HTML>
+
+<html>
+
+<head>
+
+	<title>Sanctarius</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<link href='http://fonts.googleapis.com/css?family=Open+Sans:700,300,400' rel='stylesheet' type='text/css'>
+        <script type='text/javascript' src='javascript/js/jquery/jquery90f9.js?ver=1.11.1'></script>
+        <script type='text/javascript' src='javascript/js/jquery/jquery-migrate.min1576.js?ver=1.2.1'></script>
+
+</head>
+
+<body>
+
+	<header class="global">
+
+		<img src="images/logo.png">
+
+		<ul>
+			<li><a href="#">Accueil</a></li>
+			<li><a href="Programme.html">Programme</a></li>
+			<li><a href="videos.html">Vidéos</a></li>
+			<li><a href="contact.php">Contact</a></li>
+		</ul>
+
+		<div class="clear"></div>
+
+		<h1>Bienvenue sur le live de <span>Sanctarius</span>.</h1>
+
+		<ul class="rs">
+			<li><a href="#"><img src="images/fb.png"></a></li>
+			<li><a href="#"><img src="images/tw.png"></a></li>
+			<li><a href="#"><img src="images/yt.png"></a></li>
+			<li><a href="#"><img src="images/twi.png"></a></li>
+		</ul>
+
+		<div class="clear"></div>
+
+	</header>
+
+	<div id="twitch" class="global">
+		<iframe src="http://www.twitch.tv/sanctaarius/embed" frameborder="0" scrolling="no" height="378" width="620" class="player"></iframe>
+		<iframe src="http://www.twitch.tv/sanctaarius/chat?popout=" frameborder="0" scrolling="no" height="500" width="350" class="chat"></iframe>
+
+		<div class="infos">
+
+			<a href="https://www.twitchalerts.com/donate/silenstorm" class="btn donation">Faire un don</a>
+                        <a href="#" class="btn donation">S'abonner </a>
+			                        
+			<div id="counter"></div>  <!-- Emplacement du compteur de viewers -->
+                       
+
+
+
+		</div>
+	</div>
+
+	<div id="about" class="global">
+		<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+	</div>
+
+	<script src="ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" >
+
+
+ <script>
+            $(function() {
+                    function actualizeCounter() {
+                            $.ajax({
+                                    url: 'https://api.twitch.tv/kraken/streams/sanctaarius', // Mettre le pseudo ici 
+                                    dataType: 'jsonp',
+                                    success: function(data){
+                                            if(data.stream != null)
+                                                    $("#counter").html("Nombre de viewers: <span>" + data.stream.viewers + "</span>");
+                                            else
+                                                    $("#counter").html("Nombre de viewers: <span> 0 </span>");
+                                    },
+                                    error: function (xhr, ajaxOptions, thrownError) {
+                                            $("#counter").html('');
+                                    }
+                            });
+                            setTimeout(actualizeCounter, 10000);
+                    }
+                    actualizeCounter();
+            });
+            </script>
+
+
+
+
+
+
+
+
+
+	<div id="contact" class="global">
+		<h2>Si vous avez une question ou une suggestion, <span> <a href="contact.php">contactez moi </a> </span>.</h2>
+		<p><a class="contactlink" href="mailto:messina_thomas@orange.fr">messina_thomas@orange.fr</a></p>
+	</div>
+
+	<footer>
+		<p>Sanctarius 2015. Tous droits réservés.<br>Site réalisé par Sanctarius</p>
+	</footer>
+
+</body>
+
+</html>
