@@ -1,0 +1,55 @@
+index.php
+Application\
+				Controller\
+								Application.php
+								Router.php
+								HttpRequest.php
+								HttpResponse.php
+								Autoloader.php
+								Captcha.php
+								FormBuilder.php
+								FormValidator.php
+								Mailer.php											
+				Model\
+								CurlRequest.php
+								UserManager.php
+								User.php
+								LinkedAccount.php				
+				View\
+								Forms.php	???
+								Views.php	???
+								404View.php
+								aboutView.php
+								defaultNavbarView.php
+								forgotPasswordView.php
+								linkedAccountView.php
+								navbarAccountView.php
+								profileView.php
+								resetPasswordView.php
+								template.php
+								
+Media\
+				Controller\
+								MediaController.php
+				Model\
+								data\
+														streams.json
+														games.json
+								Media.php
+								MediasManager.php
+								buildJsonFile.php
+								Game.php
+								GamesManager.php
+								Stream.php
+								StreamsManager.php
+								SearchManager.php				
+				View\
+								allGamesView.php
+								allStreamsView.php
+								streamsByGameView.php
+								followingView.php
+								searchView.php
+			
+			
+application a httprequest et httpresponse comme attribut
+les 2 controller recupère l'instance de l'application dans un attribut

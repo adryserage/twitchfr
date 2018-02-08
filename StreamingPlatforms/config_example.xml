@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--                                                                 -->
+<!--    This is an example configuration file                        -->
+<!--    Enter your own values then rename the file in config.xml     -->
+<!--                                                                 -->
+
+<streaming_platforms>
+
+	<config name="crypt_token_key" value="passphrase" ></config>
+
+
+	<platform_key platform="twitch" name="client_id" value="your twitch client id" ></platform_key>
+	<platform_key platform="twitch" name="client_secret" value="your twitch client secret" ></platform_key>
+
+	<platform_key platform="smashcast" name="app_token" value="your smashcast app token" ></platform_key>
+	<platform_key platform="smashcast" name="app_secret" value="your smashcast app secret" ></platform_key>
+
+	<platform_key platform="ytgaming" name="api_key" value="your youtube gaming api key" ></platform_key>
+	<platform_key platform="ytgaming" name="client_id" value="your youtube gaming client id" ></platform_key>
+	<platform_key platform="ytgaming" name="app_secret" value="your youtube gaming app secret" ></platform_key>
+
+
+</streaming_platforms>

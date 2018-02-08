@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--                                                                 -->
+<!--    This is an example configuration file                        -->
+<!--    Enter your own values then rename the file in config.xml     -->
+<!--                                                                 -->
+
+
+<application>
+
+	<config name="base_url" value="website base url" ></config>
+
+    <!--    SMTP configuration used by PHPMailer     -->
+	<smtp name="secure" value="tls" ></smtp>
+	<smtp name="port" value="587" ></smtp>
+	<smtp name="username" value="username@example.com" ></smtp>
+	<smtp name="password" value="password" ></smtp>
+
+    <!--    Keys for Google ReCaptcha     -->
+	<captcha name="siteKey" value="your site key" ></captcha>
+	<captcha name="secretKey" value="your secret key" ></captcha>
+
+    <!--    Your database configuration     -->
+	<database name="database" value="your DBMS"></database>
+	<database name="host" value="localhost"></database>
+	<database name="dbname" value="database name"></database>
+	<database name="charset" value="utf8"></database>
+	<database name="username" value="username"></database>
+	<database name="password" value="password"></database>
+
+</application>
