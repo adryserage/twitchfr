@@ -1,0 +1,23 @@
+#content-search-form{
+	display: flex;
+	border: 2px solid $gray - 60;
+	color: $gray;
+	font-size: 1.8rem;
+	font-weight: normal;
+	margin-bottom: 20px;
+	#content-search-field,
+	#content-search-options{
+		border: none;
+		background-color: $darkGray;
+	}
+	#content-search-field{
+		flex: 1;
+		border-right: 2px solid $gray - 60;
+		height: 26px;
+		padding: 5px;
+	}
+	#content-search-options{
+		height: 36px;
+		padding: 0px 5px;
+	}
+}

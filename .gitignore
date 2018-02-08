@@ -1,3 +1,23 @@
-_site/
-.sass-cache/
-.jekyll-metadata
+# fonts
+assets/fonts/fontawesome-webfont.eot
+assets/fonts/fontawesome-webfont.svg
+assets/fonts/fontawesome-webfont.ttf
+assets/fonts/fontawesome-webfont.woff
+assets/fonts/fontawesome-webfont.woff2
+assets/fonts/FontAwesome.otf
+
+# CSS
+assets/scss/includes/_font-awesome.min.scss
+assets/scss/includes/_normalize.scss
+
+# JS
+assets/js/jquery-1.11.3.min.js
+assets/js/jquery-ui.min.js
+assets/js/jquery.tmpl.min.js
+assets/js/twitch.min.js
+
+# Tools
+node_modules/
+background.js
+gulpfile.js
+manifest.json

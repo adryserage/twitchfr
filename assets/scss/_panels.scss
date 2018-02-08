@@ -1,0 +1,44 @@
+.content-panel{
+	position: relative;
+	display: inline-block;
+	overflow: visible;
+	max-height: none;
+	min-height: 20px;
+	.img-wrap{
+		position: relative;
+		width: 100%;
+		height: auto;
+		min-height: 0px;
+		img{
+			width: 100%;
+			height: auto;
+			vertical-align: middle;
+			margin: 0px;
+		}
+	}
+	h1{ font-size: 1.5rem; }
+	h2{ font-size: 1.2rem; }
+	h3{ font-size: 1rem; }
+	p,
+	h1,
+	h2,
+	h3,
+	ul,
+	ol,
+	>div:not(.img-wrap){ padding: 5px; }
+	li{ padding-bottom: 3px; }
+	&:hover{ background-color: $darkGray + 20; }
+}
+.linked-panel{
+	display: inline-block;
+	&:hover{ text-decoration: none; }
+}
+.content-panel-title{
+	padding: 5px;
+	font-weight: bold;
+}
+.content-panel-description{
+	max-width: 260px;
+	word-wrap: break-word;
+	p{ padding: 5px; }
+}

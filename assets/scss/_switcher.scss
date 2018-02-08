@@ -1,0 +1,78 @@
+#content-switcher{
+	display: flex;
+	height: calc(100% - 170px);
+	>div{
+		width: 100%;
+		max-width: 500px;
+		height: 100%;
+	}
+	.switcher-channels,
+	.availible-switcher-channels{
+		background-color: $darkGray + 10;
+		border: 1px solid $darkGray - 10;
+		height: 100%;
+		overflow: auto;
+		margin-right: 30px;
+		padding: 5px;
+	}
+	.switcher-channels{
+		.switcher-remove,
+		.switcher-num{ display: block; }
+	}
+	.switcher-list-title{
+		font-weight: bold;
+		font-size: 1.6rem;
+		padding: 5px 0px;
+	}
+}
+
+.switcher-channel{
+	position: relative;
+	height: 30px;
+	overflow: hidden;
+	display: flex;
+	line-height: 30px;
+	cursor: pointer;
+	margin-bottom: 3px;
+	border-bottom: 1px solid $darkGray + 5;
+	&:hover{ background-color: $darkGray - 10; }
+	img{
+		border: 1px solid $darkGray - 10;
+		height: 100%;
+		width: auto;
+	}
+	p{ padding: 0px 5px; }
+	.switcher-remove,
+	.switcher-num{
+		display: none;
+	}
+	.switcher-remove{
+		position: absolute;
+		right: 10px;
+		font-size: 1.5rem;
+		line-height: 30px;
+		z-index: 1000;
+		cursor: default;
+	}
+	.switcher-num{
+		padding-right: 10px;
+	}
+}
+.switcher-hover{
+	display: none;
+	position: absolute;
+	color: white;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	top: 0px;
+}
+.switcher-hover-move{ background-color: rgba($gray, .3); }
+.switcher-hover-add{ background-color: rgba($green, .3); }
+
+.switcher-channels .switcher-channel:hover{
+	cursor: grab;
+	.switcher-hover-move{ display: block; }
+}
+.availible-switcher-channels .switcher-channel:hover .switcher-hover-add{ display: block; }

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>FullStream</title>
+	
+	<meta charset="utf-8">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="expires" content="-1" />
+
+	<link rel="icon" type="image/png" href="assets/images/favicon.png" />	
+	<link rel="stylesheet" type="text/css" href="style.css?v=0.4.7" />
+	
+	<script type="text/javascript" src="assets/js/jquery-1.11.3.min.js"></script>
+	<script type="text/javascript" src="assets/js/jquery-ui.min.js?v=1.11.4"></script>
+	<script type="text/javascript" src="assets/js/jquery.tmpl.min.js?v=1.0.0pre"></script>
+	<script type="text/javascript" src="assets/js/twitch.min.js?d=2015.09.22"></script>
+	<script type="text/javascript" src="assets/js/main.js?v=0.4.7"></script>
+</head>
+<body class="show-content">
+	<div id="loading" class="overlay">
+		<div><i class="fa fa-cog fa-spin"></i></div>
+	</div>
+	<div id="notification" class="overlay">
+	<script id="notification-template" type="text/template">
+		<div>
+			<h3>${title}</h3>
+			<p>${message}</p>
+			{{if cta}}<button class="cta-notification cta cta-button cta-${cta}">${buttonText}</button>{{/if}}
+		</div>
+	</script>
+	</div>
+	<div id="settings" class="overlay">
+		<div>
+			<span class="setting-title">Settings & Information</span>
+			<i class="cta cta-settings cta-settings-close fa fa-times"></i>
+			<ul>
+				<li>
+					<span class="setting-title">Visibility</span>
+					<ul>
+						<li class="setting-wrap">
+							<input type="checkbox" id="setting-playlist" class="setting"/>
+							<label for="setting-playlist"><span></span></label>
+							<span>Playlist channels</span>
+						</li>
+						<li class="setting-wrap">
+							<input type="checkbox" id="setting-hosted" class="setting"/>
+							<label for="setting-hosted"><span></span></label>
+							<span>Hosted channels</span>
+						</li>
+						<li class="setting-wrap">
+							<input type="checkbox" id="setting-offline" class="setting"/>
+							<label for="setting-offline"><span></span></label>
+							<span>Offline channels</span>
+						</li>
+						<li class="setting-wrap">
+							<input type="checkbox" id="setting-chat" class="setting"/>
+							<label for="setting-chat"><span></span></label>
+							<span>Chat</span>
+						</li>
+					</ul>
+					<ul>
+						<span class="setting-title">Functionality</span>
+						<li class="setting-wrap">
+							<input type="checkbox" id="setting-switcher" class="setting"/>
+							<label for="setting-switcher"><span></span></label>
+							<span>Automatic switcher</span>
+						</li>
+					</ul>
+					<span class="setting-title">Account</span>
+					<div id="user-account">
+					<script id="account-template" type="text/template">
+						<ul>
+							<li><img src="${logo}"/></li>
+							<li>
+								<ul>
+									<li>Connected as:</li>
+									<li>${display_name}</li>
+								</ul>
+							<li>
+						</ul>
+					</script>
+					</div>
+					<button class="cta cta-disconnect cta-button">Disconnect from twitch</button>
+				</li>
+				<li>
+					<span class="setting-title">About</span>
+					<div>
+						<img src="assets/images/fullstream_logo.jpg" />
+						<p>FullStream is made to be an alternative viewing interface for Twitch.tv,
+						it's key features are a fullscreen view of the stream and chat whilst being able to browse other streams and content without leavng the current one.
+						For more info <a href="https://github.com/knifftech/FullStream" target="_blank">click here</a></p>
+						<span class="setting-title">Made by</span>
+						<img src="assets/images/knifftech_logo.jpg" />
+						<ul class="social-links">
+							<li><a href="http://knifftech.net/" target="_blank"><i class="fa fa-home"></i></a></li>
+							<li><a href="https://twitter.com/Kniffen" target="_blank"><i class="fa fa-twitter"></i></a></li>
+							<li><a href="https://www.facebook.com/Kniffen-Technologies-162498280454507/" target="_blank"><i class="fa fa-facebook"></i></a></li>
+							<li><a href="https://github.com/knifftech" target="_blank"><i class="fa fa-github"></i></a></li>
+						</ul>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<header>
+		<div id="status-bar">
+			<img class="current-logo" src="assets/images/logo.png" />
+			<h1>FullStream</h1>	
+			<script id="status-bar-template" type="text/template">
+				<img class="current-logo" src="${logo}" />
+				<ul>
+					<li id="current-title">{{if status}}${status}
+					{{else title}}${title}
+					{{else}}Untitled Broadcast{{/if}}</li>
+					<li id="current-stats">
+						<ul>
+							<li title="${display_name}"><a href="${url}" target="_blank"><i class="fa fa-video-camera"></i>${display_name}</a></li>
+							{{if game}}<li title="${game}" class="content-trigger" data-fullstream-game="${game}" data-fullstream-content-type="search"><i class="fa {{if game == 'playlist'}}fa-file-video-o{{else gameIcon}}${gameIcon}{{else}}fa-gamepad{{/if}}"></i>${game}</li>{{/if}}
+							{{if viewers}}<li title="${viewers} Viewers"><i class="fa fa-user"></i>${viewers}</li>{{/if}}
+							{{if followers}}<li title="${followers} Followers"><i class="fa fa-heart"></i>${followers}</li>{{/if}}
+							{{if views}}<li title="${views} Views"><i class="fa fa-eye"></i>${views}</li>{{/if}}
+							{{if partner}}<li title="Partnered with Twitch"><i class="fa fa-twitch"></i>Partner</li>{{/if}}
+							{{if video_height}}<li title="${video_height}p {{if average_fps}}${average_fps}FPS{{/if}}"><i class="fa fa-picture-o"></i>${video_height}p{{if average_fps}}${average_fps}{{/if}}</li>{{/if}}
+						</ul>
+					</li>
+				</ul>
+			</script>
+		</div>
+		<ul id="header-menu">
+			<li class="cta cta-channels-chat">
+				<i id="icon-chat" class="fa fa-comment"></i>
+				<i id="icon-list" class="fa fa-list-alt"></i>
+			</li>
+			<li class="cta cta-sidebar">
+				<i class="fa fa-angle-right"></i>
+				<i class="fa fa-angle-left"></i>
+			</li>
+			<li class="cta cta-settings"><i class="fa fa-gears"></i></li>
+			<li class="cta cta-menu"><i class="fa fa-bars"></i></li>
+		</ul>
+	</header>
+	<div id="wrapper">
+		<main>
+			<ul id="content">
+				<script id="content-title-template" type="text/template">
+					<div class="content-title">
+						<h2>{{if title == 'online'}}following{{else}}${title}{{/if}}</h2>
+					</div>
+				</script>
+				<li id="opt-live-channels">
+					<input type="radio" name="tabs" id="tab-live-channels" checked="true"/>
+					<label for="tab-live-channels">
+						<i class="fa fa-video-camera"></i>
+						<span>Live Channels</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Live Channels</h1></div>
+						<div id="content-live-channels" class="tab-content-flex">
+						<script id="content-channel-template" type="text/template">
+							<div class="content-box content-channel media-trigger" data-fullstream-channel="${name}">
+								<div class="content-preview">
+									<img src="${preview}" />
+									<div class="play-icon"><i class="fa fa-play"></i></div>
+									<div class="channel-id">
+										<img src="${logo}" />
+										<span>${display_name}</span>
+									</div>
+								</div>
+								<ul class="content-details">
+									<li>${status}</li>
+									{{if game && game != 'playlist'}}<li><i class="fa ${gameIcon}"></i>${game}</li>{{/if}}
+									<li>
+										<ul class="content-stats">
+										<li><i class="fa fa-user"></i>${viewers}</li>
+										<!--{{if partner}}<li><i class="fa fa-twitch"></i>Partner</li>{{/if}}-->
+										{{if video_height}}<li><i class="fa fa-picture-o"></i>${video_height}p{{if average_fps}}${average_fps}{{/if}}</li>{{/if}}
+										{{if host}}<li><i class="fa fa-male"></i>${host}</li>{{/if}}
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</script>
+						</div>
+					</div>
+				</li>
+				<li id="opt-search">
+					<input type="radio" name="tabs" id="tab-search" />
+					<label for="tab-search">
+						<i class="fa fa-search"></i>
+						<span>Search</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Search</h1></div>
+						<form id="content-search-form">
+							<input id="content-search-field" type="text" name="searchterm" placeholder="Search..." />
+							<select id="content-search-options">
+								<option value="all">All</option>
+								<option value="games">by Game</option>
+							</select>
+						</form>
+						<div id="content-search" class="tab-content-flex">
+						</div>
+					</div>
+				</li>
+				<li id="opt-panels">
+					<input type="radio" name="tabs" id="tab-panels" class="content-trigger" data-fullstream-content-type="panels"/>
+					<label for="tab-panels">
+						<i class="fa fa-info"></i>
+						<span>Panels</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Panels</h1></div>
+						<div id="content-panels" class="tab-content-column">
+						<script id="content-panels-template" type="text/template">
+							<div class="content-box content-panel">
+							{{if data.link}}<a href="${data.link}" class="linked-panel" target="_blank">{{/if}}
+							{{if data.title}}<div class="content-panel-title">${data.title}</div>{{/if}}
+							{{if data.image}}<div class="img-wrap">
+							<img src="${data.image}" />
+							</div>{{/if}}
+							<div class="content-panel-description">{{html html_description}}</div>
+							{{if data.link}}</a>{{/if}}
+							</div>
+						</script>
+						</div>
+					</div>
+				</li>
+				<li id="opt-highlights">
+					<input type="radio" name="tabs" id="tab-highlights" class="content-trigger" data-fullstream-content-type="highlights"/>
+					<label for="tab-highlights">
+						<i class="fa fa-file-video-o"></i>
+						<span>Highlights</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Highlights</h1></div>
+						<div id="content-highlights" class="tab-content-flex">
+						<script id="content-vod-template" type="text/template">
+							<div class="content-box content-vod media-trigger" data-fullstream-vod="${_id}">
+								<div class="content-preview">
+									<img src="${preview}" />
+									<div class="play-icon"><i class="fa fa-play"></i></div>
+								</div>
+								<ul class="content-details">
+									<li>${title}</li>
+									{{if title != description}}<li>${description}</li>{{/if}}
+									{{if game}}<li><i class="fa fa-gamepad"></i>${game}</li>{{/if}}
+									<li>
+										<ul class="content-stats">
+											<li><i class="fa fa-eye"></i>${views}</li>
+											<li><i class="fa fa-clock-o"></i>${length}</li>
+											<li><i class="fa fa-calendar"></i>${created_at}</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+						</script>
+						</div>
+					</div>
+				</li>
+				<li id="opt-broadcasts">
+					<input type="radio" name="tabs" id="tab-broadcasts" class="content-trigger" data-fullstream-content-type="broadcasts"/>
+					<label for="tab-broadcasts">
+						<i class="fa fa-file-video-o"></i>
+						<span>Broadcasts</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Broadcasts</h1></div>
+						<div id="content-broadcasts" class="tab-content-flex"></div>
+					</div>
+				</li>
+				<li id="opt-games">
+					<input type="radio" name="tabs" id="tab-games" class="content-trigger" data-fullstream-content-type="games"/>
+					<label for="tab-games">
+						<i class="fa fa-gamepad"></i>
+						<span>Games</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Games</h1></div>
+						<div id="content-games" class="tab-content-flex">
+						<script id="content-game-template" type="text/template">
+							<div class="content-box content-game content-trigger" data-fullstream-content-type="search" data-fullstream-game="${name}">
+								<img src="${box.medium}" />
+								<ul class="content-details">
+									{{if channels}}
+									<li>
+										<ul class="content-stats">
+											<li><i class="fa fa-video-camera"></i>${channels}</li>
+											<li><i class="fa fa-user"></i>${viewers}</li>
+										</ul>
+									</li>
+									{{/if}}
+									<li>${name}</li>
+								</ul>
+							</div>
+						</script>
+						</div>
+					</div>
+				</li>
+				<li id="opt-switcher">
+					<input type="radio" name="tabs" id="tab-switcher"/>
+					<label for="tab-switcher">
+						<i class="fa fa-list-ol"></i>
+						<span>Auto Switcher</span>
+					</label>
+					<div class="tab-content">
+						<div class="content-title"><h1>Auto Switcher</h1></div>
+						<div class="content-title">
+							<p>The auto switcher will automatically change to the top most live channel in the switcher list.</p>
+							<p>You can add channels to the list by clicking the desired channel in the availible channels list.</p>
+							<p>To sort switcher channels simply drag and drop them to the desired position.</p>
+							<p>Note that the switcher must be turned on in settings.</p>
+						</div>
+						<div id="content-switcher">
+							<div>
+								<div class="switcher-list-title">Switcher channels</div>
+								<ol class="switcher-channels"></ol>
+							</div>
+							<div>
+								<div class="switcher-list-title">Availible channels</div>
+								<ul class="availible-switcher-channels"></ul>
+							</div>
+							<script id="switcher-channel-template" type="text/template">
+								{{each(index) arr}}
+									<li class="switcher-channel" data-fullstream-channel="${name}">
+										<div class="switcher-hover switcher-hover-move"><i class="fa fa-arrows-v"></i></div>
+										<div class="switcher-hover switcher-hover-add"><i class="fa fa-plus"></i></div>
+										<span class="switcher-num">${index+1}.</span>
+										<img src="${logo}" />
+										<p>${display_name}</p>
+										<i class="switcher-remove fa fa-trash"></i>
+									</li>
+								{{/each}}
+							</script>
+						</div>
+					</div>
+				</li>
+			</ul>
+			<div id="media">
+				<div id="pip-stream">
+					<i class="cta cta-close-pip fa fa-times"></i>
+					<iframe src=""></iframe>
+				</div>
+				<iframe id="stream" src="" allowfullscreen></iframe>
+			</div>
+		</main>
+		<aside>
+			<div id="channel-list">
+				<script id="channel-template" type="text/template">
+					<div class="channel channel-type-${type}">
+						<div class="channel-logo">
+							<img src="${logo}" />
+						</div>
+						<div class="channel-details">
+							<p>${display_name}
+								{{if type != 'offline'}}
+									<span class="channel-viewers"><i class="fa fa-user"></i>${viewers}</span>
+								{{/if}}
+							</p>
+							<p>{{if type == 'online'}}
+								<i class="fa ${gameIcon}"></i> {{if game}}${game}{{else}}Online{{/if}}
+							{{else type == 'playlist'}}
+								<i class="fa fa-file-video-o"></i> Playlist
+							{{else type == 'hosted'}}
+								Hosted by ${host}
+							{{else}}
+								Offline
+							{{/if}}</p>
+						</div>
+						<ul class="channel-options" data-fullstream-channel="${name}">
+							<li class="channel-option channel-option-play media-trigger" data-fullstream-channel="${name}"><i class="fa fa-play"></i><p>Tune in</p></li>
+							<li class="channel-option channel-option-pip cta-pip cta"><i class="fa fa-clone"></i><p>PiP</p></li>
+							<li class="channel-option channel-option-highlights content-trigger" data-fullstream-content-type="highlights" ><i class="fa fa-file-video-o"></i><p>Highlights</p></li>
+							<li class="channel-option channel-option-broadcasts content-trigger" data-fullstream-content-type="broadcasts"><i class="fa fa-file-video-o"></i><p>Broadcasts</p></li>
+							<li class="channel-option channel-option-panels content-trigger" data-fullstream-content-type="panels"><i class="fa fa-info"></i><p>Panels</p></li>
+						</ul>
+					</div>
+				</script>
+			</div>
+			<iframe id="chat" src="" frameborder="0" scrolling="no"></iframe>
+		</aside>
+	</div>
+</body>
+</html>

@@ -1,0 +1,28 @@
+#header-menu{
+	display: flex;
+	line-height: 50px;
+	font-size: 1.5rem;
+	li{
+		position: relative;
+		text-align: center;
+		cursor: pointer;
+		width: 40px;
+		text-align: center;
+		&:hover i{ color: white; }
+	}
+	i{ line-height: 50px; }
+	.cta-menu i{ display: block; }
+}
+.cta-sidebar i{ 
+	font-size: 1.6rem; 
+	&:last-child{ display: none; }
+}
+.show-chat{
+	.cta-channels-chat i:first-child{ display: none; }
+	.cta-channels-chat i:last-child{ display: block; }
+}
+.hide-sidebar{
+	.cta-sidebar i:first-child{ display: none; }
+	.cta-sidebar i:last-child{ display: block; }
+}
+.cta-channels-chat{ display: none; }

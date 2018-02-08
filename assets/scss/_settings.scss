@@ -1,0 +1,99 @@
+#settings{
+	display: none;
+	>div{
+		padding: 50px 0px 30px;
+		min-width: 700px;
+		min-height: 500px;
+		border-radius: 5px;
+		>.setting-title{
+			position: absolute;
+			top: 10px;
+			left: 10px;
+			font-size: 1.3rem;
+		}
+		>ul{
+			display: flex;
+			height: 100%;
+			>li{
+				flex: 1; 
+				padding: 0px 30px;
+			}
+			>li:first-child{ border-right: 1px dotted $gray; }
+			ul{ 
+				margin: 15px 0px;
+				li{ margin-top: 7px; }
+			}
+		}
+	}
+	img{
+		width: 100%;
+		height: auto;
+		margin: 10px 0px;
+	}
+	p{
+		padding-bottom: 20px;
+		a{ color: black; }
+	}
+}
+.cta-settings-close{
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	color: black;
+	cursor: pointer;
+}
+.setting-title{	font-weight: bold; }
+.setting-wrap{
+	display: flex;
+	height: 19px;
+	line-height: 19px;
+	input{ 
+		display: none;
+		&:checked + label span{
+			background: url('assets/images/check-icon.png');
+		}
+	}
+	label span{
+		background-color: $blue;
+		width:19px;
+    height:19px;
+    border-radius: 3px;
+    cursor: pointer;
+	}
+	span{ display: inline-block; }
+	> span{ padding-left: 10px; }
+}
+.social-links{
+	display: flex;
+	li{
+		width: 20px;
+		background-color: $blue;
+		padding: 5px;
+		margin-right: 10px;
+		text-align: center;
+		border-radius: 3px;
+		&:hover{ background-color: $blue - 10; }
+	}
+	i{
+		font-size: 1.2rem;
+		color: white;
+	}
+}
+#user-account{
+	margin: 20px 0px 50px;
+	ul,
+	li,
+	img{
+		margin: 0px !important;
+	}
+	>ul{
+		display: flex;
+		>li{ height: 50px; }
+		li li{ line-height: 20px; }
+		img{
+			height: 50px;
+			width: auto;
+			padding-right: 10px;
+		}
+	}
+}
