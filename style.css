@@ -1,0 +1,167 @@
+body {
+padding:0;
+margin:0;
+font-family: "open sans";
+}
+
+a:hover, a:visited, a:link, a:active
+{
+    text-decoration: none;
+}
+
+#wrapper {
+
+width: 955px;
+height: 1050px;
+margin: 0 auto;
+z-index: 1;
+}
+
+#top {
+width: 100%;
+height: 250px; /* makes the banner go lower */
+position: relative;
+top:10px;
+}
+
+#slider{
+	border-radius:30px;
+}
+
+.menu {
+position: absolute;
+right: 0px;
+top: 50px;
+}
+
+.menu ul li {
+display:inline;
+font-size: 18px;
+border-bottom: 1px solid #CCC;
+margin: 10px;
+color:purple;
+}
+/* new */
+#social{
+	position:absolute;
+	right:160px;
+	top:110px;	
+	
+}
+#twitch{
+	float:left;
+	margin-right:50px;
+}
+#facebook{
+	float:left;
+	margin-right:50px;
+}
+#youtube{
+	float:left;
+	margin-right:50px;
+}
+#mail{
+	float:left;
+	margin-right:50px;
+	
+}
+
+.logo {
+position:absolute;
+left: 50px;
+}
+
+#content {
+width: 100%;
+height: 400px;
+}
+
+#bg-content {
+width: 100%;
+height:400px;
+background: linear-gradient(to right, indigo, black);
+z-index:-1;
+float: left;
+position: absolute;
+top: 210px;
+}
+
+
+
+#footer {
+
+position: relative;
+height: 700px;
+width:100%;
+margin-top:-90px;
+}
+
+.text-options {
+font-size: 12px;
+width: 300px;
+height: 100px;
+text-align: justify;
+}
+
+
+#sub_email{	
+	margin-top:40px;
+	}
+
+#sub_email_button {
+	margin-left:15%;
+	}
+
+
+input[type=submit]{
+	
+border-radius: 5px;
+border: 2px solid black;
+background-color: indigo;
+height: 50px;
+width: 120px;
+margin: 0 auto;
+margin-top:10px;
+margin-left:80px;
+text-align: center;
+color:white;
+font-family:"open sans";
+	
+}
+
+.options-table{
+position:relative;
+margin:0 auto;
+border-spacing:50px;
+}
+
+
+.tdleft {
+padding-right: 5px;
+padding-left: 10px;
+text-align:left;
+}
+
+.tdcenter {
+padding-right: 5px;
+padding-left: 10px;
+text-align:center;
+}
+
+iframe{
+	border:none;	
+}
+
+#copyright {
+width: 100%;
+font-size: 12px;
+height: 20px;
+position:fixed;
+float:left;
+bottom:0px;
+text-align:center;
+background: indigo;
+color:white;
+}
+
+

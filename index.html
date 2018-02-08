@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'/>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title> Home </title>
+<link href = "style.css" type="text/css" rel = "stylesheet" />
+<link href = "style_bannerslide.css" type="text/css" rel = "stylesheet" />
+
+<script src = "jquery-1.11.3.min.js" type="text/javascript"></script>
+	<script src = "jquery.cycle.all.js" type="text/javascript"></script>
+	<script type = "text/javascript">
+	$('#slider').cycle({ 
+    fx:     'scrollHorz', 
+    speed:  'slow',     
+    next:   '#next', 
+    prev:   '#prev' 
+}); </script>
+</head>
+
+<body>
+<div id = "bg-content"> </div>
+
+<div id = "wrapper"> 
+	<div id = "top"> 
+		<span class = "logo"> <img src = "htlogo1.png" width = "170" height = "140" alt="Sticky Twitches"/> </span>
+			<div class = "menu">
+				<ul>
+					<li><a href = "index.html">Home</a></li>
+					<li><a href = "aboutus.html">What we do</a></li>
+					<li><a href = "starontheshow.html">Be a Guess Star!</a></li>
+					<li><a href = "http://www.twitch.tv/sticky_twitchers/profile" target="_blank">Check us on Twitch</a></li>
+					<li><a href = "previousshows.html">Previous Broadcasts</a></li>						
+				</ul>
+			</div>
+
+		<div id = "social">			
+			<div id="twitch"><a href="http://www.twitch.tv/sticky_twitchers/profile" target="_blank"><img src = "twitch-64.png" alt="Twitch"/></a></div>
+			<div id="youtube"><a href="https://www.youtube.com/channel/UCUiXrGPu8Rh-0dGnwD94tJA" target="_blank"><img src = "youtube-64.png" alt="Youtube"/></a></div>	
+			<div id="facebook"><a href="https://www.facebook.com/Hypnotoad-60506355020/" target="_blank"><img src = "facebook-64.png" alt="Facebook"/></a></div>
+			<div id="mail"><a href="mailto:stickytwitchers@gmail.com"><img src = "mail-64.png" alt="E-mail"/></a></div>
+		</div>		
+	</div>
+	
+		<div id = "content"> 
+			<div id = "banner"> 
+			
+						<div id = "bannercontainer">
+							<div class = "controller" id="prev"> </div>
+								<div id = "slider"> 
+									<img src = "Left4Zoidberg.jpg" width="955" height="320" alt="This is the first image"/>
+									<img src = "bunnyloving.jpg" width="955" height="320" alt="This is the second image"/>
+									<img src = "giphy.gif" width="955" height="320" alt="This is the third image"/>		
+								</div>
+							<div class = "controller" id="next"> </div>
+						</div>
+			
+			</div>	
+		</div>
+
+	<div id = "footer"> 
+			
+				<table class = "options-table">
+					 <tr>
+							<td class ="tdleft">									
+								<h2 style="color:purple"> Last Sticky Twitch! </h2>
+									<p> Check our last broadcast, we know you want to be next!</p>														
+										<iframe width="460" height="315" src="https://www.youtube.com/embed/eBhfsUmdWmU"></iframe>
+									
+									<div id = "sub_email">
+										<p>Subscribe your e-mail and receive our latest news!</p>
+											<div id = "sub_email_button">	
+													Your e-mail:
+													<input type="text" name="email"/><br>
+													<input type="submit" id="sub" value="Subscribe!"/>
+													<script src = "js_sub_email.js" type="text/javascript"></script>												
+											</div>	
+									</div>					
+							</td>					
+													
+							<td class ="tdcenter"> 
+								<h2 style="text-align:center; color:purple"> Sticky Tweets</h2>
+								<a class="twitter-timeline" href="https://twitter.com/IgorSticky" data-widget-id="669301307761651713">Tweets by @StickyTwitches</a>
+									<script type="text/javascript">!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs"); </script>
+							</td>
+					</tr>
+				</table>
+			
+	</div>
+</div>	
+				
+		<div id = "copyright" >
+			<span class = "text-copyright">Copyrights All rights reserved</span>		
+		</div>
+		
+</body>
+
+</html>
