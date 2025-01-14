@@ -42,7 +42,7 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
         const updatedStreamers = await updateStreamersStatus(streamers);
         console.log('StreamerList: Updated streamers:', updatedStreamers);
         updatedStreamers.forEach((streamer) => {
-          updateStreamerStatus(streamer.id, streamer.isLive, {
+          updateStreamerStatus(streamer.id, streamer.isLive ?? false, {
             title: streamer.title,
             gameName: streamer.gameName,
             viewerCount: streamer.viewerCount,
@@ -101,25 +101,19 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
     displayed: displayedStreamers.length
   });
 
-  return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {displayedStreamers.map((streamer) => (
-          <StreamerCard key={streamer.id} streamer={streamer} />
-        ))}
-        {displayedStreamers.length === 0 && streamers.length > 0 && (
-          <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
-            {showOnlineOnly || pathname === "/"
-              ? "No streamers are currently live"
-              : "No streamers match your filters"}
-          </div>
-        )}
-        {streamers.length === 0 && (
-          <div className="col-span-full text-center py-8 text-gray-500 dark:text-gray-400">
-            No streamers added yet
-          </div>
-        )}
+  if (displayedStreamers.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-gray-500">No streamers found</p>
       </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 gap-4">
+      {displayedStreamers.map((streamer) => (
+        <StreamerCard key={streamer.id} streamer={streamer} />
+      ))}
     </div>
   );
 };

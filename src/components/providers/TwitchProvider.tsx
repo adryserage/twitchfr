@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { initializeTwitchApi } from '@/utils/twitchApi';
 import { useStreamerStore } from '@/store/streamerStore';
 
 export function TwitchProvider({ children }: { children: React.ReactNode }) {
@@ -10,14 +9,10 @@ export function TwitchProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const init = async () => {
       try {
-        console.log('TwitchProvider: Initializing...');
-        await initializeTwitchApi();
-        
-        // Load default streamers
-        console.log('TwitchProvider: Loading default streamers...');
+        console.log('TwitchProvider: Loading streamers...');
         const response = await fetch('/api/streamers');
         if (!response.ok) {
-          throw new Error('Failed to load default streamers');
+          throw new Error('Failed to load streamers');
         }
         
         const data = await response.json();

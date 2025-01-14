@@ -4,6 +4,7 @@ import { isAuthenticated, unauthorizedResponse } from "@/middleware/auth";
 import { twitchClient } from "@/utils/twitchClient";
 import type { NextRequest } from "next/server";
 import { prisma } from "@/lib/db";
+import { rateLimiter } from "@/utils/rateLimiter";
 
 export async function GET() {
   try {
@@ -19,10 +20,12 @@ export async function GET() {
       dbStreamers.map(async (streamer) => {
         try {
           console.log(`Checking status for streamer: ${streamer.displayName}`);
+          const user = await client.users.getUserById(streamer.id);
           const stream = await client.streams.getStreamByUserId(streamer.id);
           
           return {
             ...streamer,
+            login: user?.name || streamer.login,
             isLive: !!stream,
             title: stream?.title || "",
             gameName: stream?.gameName || "",
@@ -49,63 +52,73 @@ export async function GET() {
         headers: {
           "Cache-Control": "no-store, must-revalidate",
           Pragma: "no-cache",
+          Expires: "0",
         },
       },
     );
   } catch (error) {
-    console.error("Error fetching streamers:", error);
-    return NextResponse.json({ streamers: [] });
+    console.error("Error in GET /api/streamers:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch streamers" },
+      { status: 500 },
+    );
   }
 }
 
 export async function POST(request: NextRequest) {
-  if (!isAuthenticated(request)) {
-    return unauthorizedResponse();
-  }
-
   try {
-    const body = await request.json();
-    const { login } = body;
+    // Check authentication
+    if (!isAuthenticated(request)) {
+      return unauthorizedResponse();
+    }
 
-    if (!login) {
+    // Check rate limit
+    if (!rateLimiter.canMakeCall("add_streamer")) {
       return NextResponse.json(
-        { error: "Username is required" },
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+
+    // Parse request body
+    const body = await request.json();
+    const { streamer } = body as { streamer: Streamer };
+
+    if (!streamer?.id || !streamer?.displayName || !streamer?.login) {
+      return NextResponse.json(
+        { error: "Invalid streamer data" },
         { status: 400 },
       );
     }
 
-    const client = await twitchClient.getClient();
-    const user = await client.users.getUserByName(login);
-
-    if (!user) {
-      return NextResponse.json(
-        { error: "Streamer not found on Twitch" },
-        { status: 404 },
-      );
-    }
-
+    // Check if streamer already exists
     const existingStreamer = await prisma.streamer.findUnique({
-      where: { id: user.id },
+      where: { id: streamer.id },
     });
 
     if (existingStreamer) {
       return NextResponse.json(
         { error: "Streamer already exists" },
-        { status: 400 },
+        { status: 409 },
       );
     }
 
-    const streamer = await prisma.streamer.create({
+    // Add streamer to database
+    await prisma.streamer.create({
       data: {
-        id: user.id,
-        displayName: user.displayName,
-        profileImageUrl: user.profilePictureUrl,
+        id: streamer.id,
+        login: streamer.login,
+        displayName: streamer.displayName,
+        profileImageUrl: streamer.profileImageUrl,
+        addedAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
       },
     });
 
-    return NextResponse.json({ streamer });
+    rateLimiter.recordCall("add_streamer");
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error adding streamer:", error);
+    console.error("Error in POST /api/streamers:", error);
     return NextResponse.json(
       { error: "Failed to add streamer" },
       { status: 500 },
@@ -114,13 +127,22 @@ export async function POST(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  if (!isAuthenticated(request)) {
-    return unauthorizedResponse();
-  }
-
   try {
+    // Check authentication
+    if (!isAuthenticated(request)) {
+      return unauthorizedResponse();
+    }
+
+    // Check rate limit
+    if (!rateLimiter.canMakeCall("remove_streamer")) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        { status: 429 },
+      );
+    }
+
     const body = await request.json();
-    const { streamerId } = body;
+    const { streamerId } = body as { streamerId: string };
 
     if (!streamerId) {
       return NextResponse.json(
@@ -133,11 +155,18 @@ export async function DELETE(request: NextRequest) {
       where: { id: streamerId },
     });
 
+    rateLimiter.recordCall("remove_streamer");
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error deleting streamer:", error);
+    console.error("Error in DELETE /api/streamers:", error);
+    if (error instanceof Error && error.message.includes("Record to delete does not exist")) {
+      return NextResponse.json(
+        { error: "Streamer not found" },
+        { status: 404 },
+      );
+    }
     return NextResponse.json(
-      { error: "Failed to delete streamer" },
+      { error: "Failed to remove streamer" },
       { status: 500 },
     );
   }

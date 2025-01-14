@@ -9,11 +9,12 @@ generator client {
 }
 
 model Streamer {
-  id              String    @id
+  id              String   @id
+  login           String   @unique
   displayName     String
   profileImageUrl String
-  addedAt         DateTime  @default(now())
-  lastUpdated     DateTime  @default(now()) @updatedAt
+  addedAt         DateTime @default(now())
+  lastUpdated     DateTime @updatedAt
 
   @@index([addedAt])
 }
