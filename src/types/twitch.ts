@@ -1,14 +1,15 @@
 export interface Streamer {
   id: string;
-  login: string;
   displayName: string;
   profileImageUrl: string;
-  isLive: boolean;
+  addedAt: string;
+  lastUpdated: string;
+  // Runtime-only fields
+  isLive?: boolean;
   title?: string;
   gameName?: string;
   viewerCount?: number;
   startedAt?: string;
-  addedAt?: string;
 }
 
 export interface StreamerStore {
@@ -19,6 +20,6 @@ export interface StreamerStore {
   updateStreamerStatus: (
     streamerId: string,
     isLive: boolean,
-    liveData?: Partial<Streamer>
+    liveData?: Partial<Streamer>,
   ) => void;
 }

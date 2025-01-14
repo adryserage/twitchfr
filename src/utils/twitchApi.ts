@@ -1,89 +1,74 @@
-import { Streamer } from '@/types/twitch';
-import { streamerCache } from './cache';
+import { Streamer } from "@/types/twitch";
+import { Cache } from "./cache";
+import { rateLimiter } from "./rateLimiter";
+import { twitchClient } from "./twitchClient";
 
-let isInitialized = false;
+const BATCH_SIZE = 10;
+const streamerCache = new Cache<Streamer>(60); // 60 seconds cache
 
-export const initializeTwitchApi = async () => {
+async function getStreamerInfo(streamerId: string): Promise<Streamer | null> {
   try {
-    const response = await fetch('/api/twitch');
-    if (!response.ok) {
-      const data = await response.json();
-      throw new Error(data.error || 'Failed to initialize Twitch API');
-    }
-    isInitialized = true;
-    console.log('Twitch API initialized successfully');
-  } catch (error) {
-    console.error('Failed to initialize Twitch API:', error);
-    throw error;
-  }
-};
-
-export const getStreamerInfo = async (username: string): Promise<Streamer | null> => {
-  if (!isInitialized) {
-    throw new Error('Twitch API not initialized. Please check your credentials.');
-  }
-
-  // Check cache first
-  const cachedStreamer = streamerCache.get(username) as Streamer | null;
-  if (cachedStreamer) {
-    console.log(`Cache hit for streamer: ${username}`);
-    return cachedStreamer;
-  }
-
-  console.log(`Cache miss for streamer: ${username}, fetching from API...`);
-  try {
-    const response = await fetch('/api/twitch', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username }),
-    });
-
-    if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
-      const data = await response.json();
-      throw new Error(data.error || 'Failed to fetch streamer info');
+    if (!rateLimiter.canMakeCall(streamerId)) {
+      console.log(`Rate limit hit for streamer: ${streamerId}`);
+      return null;
     }
 
-    const streamer = await response.json() as Streamer;
-    streamerCache.set(username, streamer);
-    return streamer;
+    const client = await twitchClient.getClient();
+    const user = await client.users.getUserById(streamerId);
+    if (!user) {
+      console.error(`User not found: ${streamerId}`);
+      return null;
+    }
+
+    const stream = await client.streams.getStreamByUserId(streamerId);
+    rateLimiter.recordCall(streamerId);
+
+    return {
+      id: user.id,
+      displayName: user.displayName,
+      profileImageUrl: user.profilePictureUrl,
+      isLive: !!stream,
+      title: stream?.title || "",
+      gameName: stream?.gameName || "",
+      viewerCount: stream?.viewers || 0,
+      startedAt: stream?.startDate?.toISOString() || "",
+      addedAt: new Date().toISOString(),
+      lastUpdated: new Date().toISOString(),
+    };
   } catch (error) {
-    console.error(`Error fetching streamer ${username}:`, error);
+    console.error(`Error fetching streamer info for ${streamerId}:`, error);
     return null;
   }
-};
+}
 
-export const updateStreamersStatus = async (streamers: Streamer[]): Promise<Streamer[]> => {
-  if (!isInitialized) {
-    throw new Error('Twitch API not initialized. Please check your credentials.');
-  }
-
+export async function updateStreamersStatus(
+  streamers: Streamer[],
+): Promise<Streamer[]> {
   try {
-    // Process streamers in batches to avoid rate limits
-    const batchSize = 5;
-    const batches = [];
-    for (let i = 0; i < streamers.length; i += batchSize) {
-      batches.push(streamers.slice(i, i + batchSize));
+    console.log(`Updating status for ${streamers.length} streamers`);
+
+    // Split streamers into batches to avoid rate limits
+    const batches: Streamer[][] = [];
+    for (let i = 0; i < streamers.length; i += BATCH_SIZE) {
+      batches.push(streamers.slice(i, i + BATCH_SIZE));
     }
 
     let updatedStreamers: Streamer[] = [];
     for (const batch of batches) {
       const batchPromises = batch.map(async (streamer) => {
         // Check cache first
-        const cachedStreamer = streamerCache.get(streamer.login) as Streamer | null;
+        const cachedStreamer = streamerCache.get(
+          streamer.id,
+        ) as Streamer | null;
         if (cachedStreamer) {
-          console.log(`Cache hit for streamer: ${streamer.login}`);
+          console.log(`Cache hit for streamer: ${streamer.displayName}`);
           return cachedStreamer;
         }
 
-        console.log(`Fetching info for streamer: ${streamer.login}`);
-        const updatedStreamer = await getStreamerInfo(streamer.login);
+        console.log(`Fetching info for streamer: ${streamer.displayName}`);
+        const updatedStreamer = await getStreamerInfo(streamer.id);
         if (updatedStreamer) {
-          streamerCache.set(streamer.login, updatedStreamer);
+          streamerCache.set(streamer.id, updatedStreamer);
           return updatedStreamer;
         }
         return streamer;
@@ -91,16 +76,11 @@ export const updateStreamersStatus = async (streamers: Streamer[]): Promise<Stre
 
       const batchResults = await Promise.all(batchPromises);
       updatedStreamers = [...updatedStreamers, ...batchResults];
-
-      // Add a small delay between batches to avoid rate limits
-      if (batches.length > 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
     }
 
     return updatedStreamers;
   } catch (error) {
-    console.error('Error updating streamer statuses:', error);
+    console.error("Error updating streamers status:", error);
     return streamers;
   }
-};
+}

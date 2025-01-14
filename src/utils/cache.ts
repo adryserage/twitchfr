@@ -3,7 +3,7 @@ interface CacheEntry<T> {
   timestamp: number;
 }
 
-class Cache<T> {
+export class Cache<T> {
   private cache: Map<string, CacheEntry<T>> = new Map();
   private pendingRequests: Map<string, Promise<T>> = new Map();
   private readonly ttl: number;
