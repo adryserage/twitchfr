@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
 
     // Get user data from Twitch
     const client = await twitchClient.getClient();
-    const userData = await client.users.getUserById(streamerId);
+    const userData = await client.users.getUserByName(streamerId);
     if (!userData) {
       return NextResponse.json(
         { error: "Streamer not found on Twitch" },
