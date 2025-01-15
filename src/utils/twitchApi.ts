@@ -25,6 +25,7 @@ async function getStreamerInfo(streamerId: string): Promise<Streamer | null> {
 
     return {
       id: user.id,
+      login: user.name,
       displayName: user.displayName,
       profileImageUrl: user.profilePictureUrl,
       isLive: !!stream,
@@ -71,7 +72,15 @@ export async function updateStreamersStatus(
           streamerCache.set(streamer.id, updatedStreamer);
           return updatedStreamer;
         }
-        return streamer;
+        return {
+          ...streamer,
+          isLive: false,
+          title: "",
+          gameName: "",
+          viewerCount: 0,
+          startedAt: "",
+          lastUpdated: new Date().toISOString(),
+        };
       });
 
       const batchResults = await Promise.all(batchPromises);
