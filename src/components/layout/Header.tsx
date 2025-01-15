@@ -12,7 +12,7 @@ export default function Header() {
 
   const handleRefresh = async () => {
     if (isRefreshing) return;
-    
+
     setIsRefreshing(true);
     try {
       const response = await fetch("/api/streamers", {
@@ -60,9 +60,10 @@ export default function Header() {
         onClick={handleRefresh}
         disabled={isRefreshing}
         className="p-2 hover:bg-muted rounded-md transition-colors disabled:opacity-50"
-        title="Refresh streamers"
-      >
-        <RefreshCw className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`} />
+        title="Refresh streamers">
+        <RefreshCw
+          className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`}
+        />
       </button>
     </header>
   );

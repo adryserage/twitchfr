@@ -5,16 +5,18 @@ import { isAuthenticated, unauthorizedResponse } from "@/middleware/auth";
 import { twitchClient } from "@/utils/twitchClient";
 import { LiveStatusService } from "@/services/liveStatusService";
 import { getCachedStreamers } from "@/lib/cache";
+import { StreamerService } from "@/services/streamerService";
 
 // Initialize services
 const liveStatusService = new LiveStatusService();
+const streamerService = new StreamerService();
 
 // Start live status updates
 liveStatusService.startPeriodicUpdates();
 
 export async function GET() {
   try {
-    const streamers = await getCachedStreamers(async () => Promise.resolve([]));
+    const streamers = await getCachedStreamers(async () => streamerService.getStreamers());
     return NextResponse.json({ streamers });
   } catch (error) {
     console.error("Error fetching streamers:", error);
@@ -60,10 +62,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Save to database
-    // await streamerService.upsertStreamer(streamer);
-
-    // Revalidate cache
-    // revalidateTag(CACHE_TAGS.STREAMERS);
+    await streamerService.upsertStreamer(streamer);
 
     return NextResponse.json({ streamer });
   } catch (error) {
@@ -90,10 +89,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // await streamerService.deleteStreamer(streamerId);
-
-    // Revalidate cache
-    // revalidateTag(CACHE_TAGS.STREAMERS);
+    await streamerService.deleteStreamer(streamerId);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
