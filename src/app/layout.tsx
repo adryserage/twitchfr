@@ -14,8 +14,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Twitch Streamer Tracker",
-  description: "Track your favorite Twitch streamers",
+  title: 'TwitchFr',
+  description: 'French Twitch Streamers Directory',
+  manifest: '/manifest.json',
+  themeColor: '#9146FF',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  icons: {
+    apple: '/icons/icon-192x192.png',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'TwitchFr',
+  },
 };
 
 export default function RootLayout({

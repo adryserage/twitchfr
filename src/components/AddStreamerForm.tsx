@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useStreamerStore } from "@/store/streamerStore";
-import { Streamer } from "@/types/twitch";
 
 interface FormState {
   username: string;

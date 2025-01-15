@@ -11,7 +11,7 @@ export const CACHE_TIMES = {
 } as const;
 
 export const getCachedStreamers = unstable_cache(
-  async (getStreamersFunc: () => Promise<any>) => {
+  async <T>(getStreamersFunc: () => Promise<T>): Promise<T> => {
     return getStreamersFunc();
   },
   ['streamers-list'],
@@ -22,7 +22,7 @@ export const getCachedStreamers = unstable_cache(
 );
 
 export const getCachedLiveStatus = unstable_cache(
-  async (getLiveStatusFunc: () => Promise<any>) => {
+  async <T>(getLiveStatusFunc: () => Promise<T>): Promise<T> => {
     return getLiveStatusFunc();
   },
   ['live-status'],

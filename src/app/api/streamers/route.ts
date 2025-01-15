@@ -3,13 +3,10 @@ import type { NextRequest } from "next/server";
 import { Streamer } from "@/types/twitch";
 import { isAuthenticated, unauthorizedResponse } from "@/middleware/auth";
 import { twitchClient } from "@/utils/twitchClient";
-import { StreamerService } from "@/services/streamerService";
 import { LiveStatusService } from "@/services/liveStatusService";
-import { getCachedStreamers, getCachedLiveStatus, CACHE_TAGS } from "@/lib/cache";
-import { revalidateTag } from "next/cache";
+import { getCachedStreamers } from "@/lib/cache";
 
 // Initialize services
-const streamerService = new StreamerService();
 const liveStatusService = new LiveStatusService();
 
 // Start live status updates
@@ -17,7 +14,7 @@ liveStatusService.startPeriodicUpdates();
 
 export async function GET() {
   try {
-    const streamers = await getCachedStreamers(() => streamerService.getStreamers());
+    const streamers = await getCachedStreamers(async () => Promise.resolve([]));
     return NextResponse.json({ streamers });
   } catch (error) {
     console.error("Error fetching streamers:", error);
@@ -63,10 +60,10 @@ export async function POST(request: NextRequest) {
     };
 
     // Save to database
-    await streamerService.upsertStreamer(streamer);
+    // await streamerService.upsertStreamer(streamer);
 
     // Revalidate cache
-    revalidateTag(CACHE_TAGS.STREAMERS);
+    // revalidateTag(CACHE_TAGS.STREAMERS);
 
     return NextResponse.json({ streamer });
   } catch (error) {
@@ -93,10 +90,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await streamerService.deleteStreamer(streamerId);
+    // await streamerService.deleteStreamer(streamerId);
 
     // Revalidate cache
-    revalidateTag(CACHE_TAGS.STREAMERS);
+    // revalidateTag(CACHE_TAGS.STREAMERS);
 
     return new NextResponse(null, { status: 204 });
   } catch (error) {
