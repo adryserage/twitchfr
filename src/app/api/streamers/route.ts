@@ -3,13 +3,18 @@ import { Streamer } from "@/types/twitch";
 import { isAuthenticated, unauthorizedResponse } from "@/middleware/auth";
 import { twitchClient } from "@/utils/twitchClient";
 import type { NextRequest } from "next/server";
-import { prisma } from "@/lib/db";
+import { prisma, sql } from "@/lib/db";
 import { rateLimiter } from "@/utils/rateLimiter";
 
 export async function GET() {
   try {
     console.log("GET /api/streamers - Starting request");
-    const dbStreamers = await prisma.streamer.findMany();
+    
+    // Use raw SQL for better performance in serverless environment
+    const dbStreamers = await sql<Streamer[]>`
+      SELECT * FROM "Streamer"
+      ORDER BY "lastUpdated" DESC
+    `;
     
     // Initialize Twitch client
     const client = await twitchClient.getClient();
@@ -91,29 +96,38 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if streamer already exists
-    const existingStreamer = await prisma.streamer.findUnique({
-      where: { id: streamer.id },
-    });
+    // Check if streamer already exists using raw SQL
+    const existingStreamer = await sql<Streamer[]>`
+      SELECT * FROM "Streamer"
+      WHERE id = ${streamer.id}
+      LIMIT 1
+    `;
 
-    if (existingStreamer) {
+    if (existingStreamer.length > 0) {
       return NextResponse.json(
         { error: "Streamer already exists" },
         { status: 409 },
       );
     }
 
-    // Add streamer to database
-    await prisma.streamer.create({
-      data: {
-        id: streamer.id,
-        login: streamer.login,
-        displayName: streamer.displayName,
-        profileImageUrl: streamer.profileImageUrl,
-        addedAt: new Date().toISOString(),
-        lastUpdated: new Date().toISOString(),
-      },
-    });
+    // Add streamer using raw SQL
+    await sql`
+      INSERT INTO "Streamer" (
+        id,
+        login,
+        "displayName",
+        "profileImageUrl",
+        "addedAt",
+        "lastUpdated"
+      ) VALUES (
+        ${streamer.id},
+        ${streamer.login},
+        ${streamer.displayName},
+        ${streamer.profileImageUrl},
+        ${new Date().toISOString()},
+        ${new Date().toISOString()}
+      )
+    `;
 
     rateLimiter.recordCall("add_streamer");
     return NextResponse.json({ success: true });
@@ -151,20 +165,24 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    await prisma.streamer.delete({
-      where: { id: streamerId },
-    });
+    // Delete streamer using raw SQL
+    const result = await sql`
+      DELETE FROM "Streamer"
+      WHERE id = ${streamerId}
+      RETURNING id
+    `;
 
-    rateLimiter.recordCall("remove_streamer");
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error in DELETE /api/streamers:", error);
-    if (error instanceof Error && error.message.includes("Record to delete does not exist")) {
+    if (result.length === 0) {
       return NextResponse.json(
         { error: "Streamer not found" },
         { status: 404 },
       );
     }
+
+    rateLimiter.recordCall("remove_streamer");
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error in DELETE /api/streamers:", error);
     return NextResponse.json(
       { error: "Failed to remove streamer" },
       { status: 500 },
