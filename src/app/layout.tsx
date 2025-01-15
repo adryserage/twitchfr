@@ -17,7 +17,6 @@ export const metadata: Metadata = {
   title: 'TwitchFr',
   description: 'French Twitch Streamers Directory',
   manifest: '/manifest.json',
-  themeColor: '#9146FF',
   icons: {
     apple: '/icons/icon-192x192.png',
   },
@@ -29,6 +28,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
+  themeColor: '#9146FF',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

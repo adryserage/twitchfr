@@ -45,12 +45,23 @@ export function AddStreamerForm() {
     }));
 
     try {
+      // First, ensure we have a valid session
+      const authResponse = await fetch("/api/auth", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (!authResponse.ok) {
+        throw new Error("Authentication failed");
+      }
+
+      // Now make the actual API request
       const response = await fetch("/api/streamers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`
         },
+        credentials: "include", // This will send the session cookie
         body: JSON.stringify({ streamerId: formState.username }),
       });
 
