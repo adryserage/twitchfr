@@ -3,27 +3,14 @@ import { StreamerStore } from "@/types/twitch";
 
 export const useStreamerStore = create<StreamerStore>()((set) => ({
   streamers: [],
-  isLoading: false,
-  error: null,
   
   setStreamers: (streamers) => {
     console.log('StreamerStore: Setting streamers:', streamers);
-    set({ streamers, error: null });
-  },
-
-  setError: (error) => {
-    console.error('StreamerStore: Error:', error);
-    set({ error });
-  },
-
-  setLoading: (isLoading) => {
-    console.log('StreamerStore: Setting loading:', isLoading);
-    set({ isLoading });
+    set({ streamers });
   },
   
   addStreamer: async (streamer) => {
     try {
-      set({ isLoading: true, error: null });
       console.log('StreamerStore: Adding streamer:', streamer);
       const response = await fetch('/api/streamers', {
         method: 'POST',
@@ -40,21 +27,16 @@ export const useStreamerStore = create<StreamerStore>()((set) => ({
 
       set((state) => ({
         streamers: [...state.streamers, streamer],
-        error: null,
       }));
       console.log('StreamerStore: Streamer added successfully');
     } catch (error) {
       console.error('StreamerStore: Error adding streamer:', error);
-      set({ error: error instanceof Error ? error.message : 'Failed to add streamer' });
       throw error;
-    } finally {
-      set({ isLoading: false });
     }
   },
 
   removeStreamer: async (streamerId) => {
     try {
-      set({ isLoading: true, error: null });
       console.log('StreamerStore: Removing streamer:', streamerId);
       const response = await fetch('/api/streamers', {
         method: 'DELETE',
@@ -71,31 +53,21 @@ export const useStreamerStore = create<StreamerStore>()((set) => ({
 
       set((state) => ({
         streamers: state.streamers.filter((s) => s.id !== streamerId),
-        error: null,
       }));
       console.log('StreamerStore: Streamer removed successfully');
     } catch (error) {
       console.error('StreamerStore: Error removing streamer:', error);
-      set({ error: error instanceof Error ? error.message : 'Failed to remove streamer' });
       throw error;
-    } finally {
-      set({ isLoading: false });
     }
   },
 
-  updateStreamerStatus: (streamerId, isLive, liveData = {}) => {
+  updateStreamerStatus: (streamerId, isLive, liveData) => {
+    console.log('StreamerStore: Updating streamer status:', { streamerId, isLive, liveData });
     set((state) => ({
-      streamers: state.streamers.map((streamer) =>
-        streamer.id === streamerId
-          ? {
-              ...streamer,
-              isLive,
-              title: liveData.title ?? streamer.title ?? '',
-              gameName: liveData.gameName ?? streamer.gameName ?? '',
-              viewerCount: liveData.viewerCount ?? streamer.viewerCount ?? 0,
-              startedAt: liveData.startedAt ?? streamer.startedAt ?? '',
-            }
-          : streamer,
+      streamers: state.streamers.map((s) =>
+        s.id === streamerId
+          ? { ...s, isLive, ...liveData }
+          : s
       ),
     }));
   },

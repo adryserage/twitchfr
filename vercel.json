@@ -5,6 +5,7 @@
   "cleanUrls": true,
   "public": false,
   "framework": "nextjs",
+  "regions": ["cdg1"],
   "headers": [
     {
       "source": "/(.*)",
