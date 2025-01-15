@@ -1,13 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 
-// This needs to use `var` for global scope persistence in development
-// eslint-disable-next-line no-var
 declare global {
+  // eslint-disable-next-line no-var
   var prisma: PrismaClient | undefined;
 }
 
-export const prisma = global.prisma || new PrismaClient();
+const prismaGlobal = global as typeof global & {
+  prisma: PrismaClient | undefined;
+};
+
+export const prisma = prismaGlobal.prisma || new PrismaClient();
 
 if (process.env.NODE_ENV !== 'production') {
-  global.prisma = prisma;
+  prismaGlobal.prisma = prisma;
 }
