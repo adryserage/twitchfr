@@ -1,4 +1,4 @@
-import { ApiClient } from '@twurple/api';
+import { ApiClient, HelixUser, HelixStream } from '@twurple/api';
 import { AppTokenAuthProvider } from '@twurple/auth';
 import { TwitchAPIError } from '@/types/errors';
 
@@ -6,6 +6,8 @@ class TwitchClientManager {
   private static instance: TwitchClientManager;
   private apiClient: ApiClient | null = null;
   private initializationPromise: Promise<ApiClient> | null = null;
+  users!: HelixUser;
+  streams!: HelixStream;
 
   private constructor() {}
 

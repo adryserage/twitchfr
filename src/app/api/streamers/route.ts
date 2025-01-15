@@ -1,184 +1,117 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
+import type { NextRequest } from "next/server";
 import { Streamer } from "@/types/twitch";
 import { isAuthenticated, unauthorizedResponse } from "@/middleware/auth";
 import { twitchClient } from "@/utils/twitchClient";
-import type { NextRequest } from "next/server";
+import { StreamerService } from "@/services/streamerService";
+import { LiveStatusService } from "@/services/liveStatusService";
 
-const dataFilePath = path.join(
-  process.cwd(),
-  "src",
-  "data",
-  "defaultStreamers.json",
-);
+// Initialize services
+const streamerService = new StreamerService();
+const liveStatusService = new LiveStatusService();
 
-async function readStreamersFile() {
-  try {
-    console.log("Reading streamers file from:", dataFilePath);
-    const fileContent = await fs.readFile(dataFilePath, "utf-8");
-    const data = JSON.parse(fileContent);
-    console.log(
-      "Successfully read streamers file, found streamers:",
-      data.streamers.length,
-    );
-    return data;
-  } catch (error) {
-    console.error("Error reading streamers file:", error);
-    // Return empty array instead of throwing to handle first-time use
-    return { streamers: [] };
-  }
-}
-
-async function writeStreamersFile(data: { streamers: Streamer[] }) {
-  try {
-    await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2));
-    return true;
-  } catch (error) {
-    console.error("Error writing streamers file:", error);
-    return false;
-  }
-}
+// Start live status updates
+liveStatusService.startPeriodicUpdates();
 
 export async function GET() {
   try {
-    console.log("GET /api/streamers - Starting request");
-    const streamersData = await readStreamersFile();
-
-    if (!streamersData || !streamersData.streamers) {
-      console.error("Invalid data format in streamers file");
-      // Return empty array instead of throwing
-      return NextResponse.json({ streamers: [] });
-    }
-
-    console.log(
-      "Initial data loaded, streamers count:",
-      streamersData.streamers.length,
-    );
-
-    // Initialize Twitch client
-    const client = await twitchClient.getClient();
-    console.log("Twitch client initialized, updating streamer statuses...");
-
-    // Update live status for all streamers
-    const updatedStreamers = await Promise.all(
-      streamersData.streamers.map(async (streamer: Streamer) => {
-        try {
-          console.log(`Checking status for streamer: ${streamer.displayName}`);
-          const stream = await client.streams.getStreamByUserId(streamer.id);
-          const updatedStreamer = {
-            ...streamer,
-            isLive: !!stream,
-            title: stream?.title || streamer.title || "",
-            gameName: stream?.gameName || streamer.gameName || "",
-            viewerCount: stream?.viewers || 0,
-            startedAt: stream?.startDate?.toISOString() || "",
-          };
-          console.log(
-            `${streamer.displayName} is ${!!stream ? "live" : "offline"}`,
-          );
-          return updatedStreamer;
-        } catch (error) {
-          console.error(`Error updating streamer ${streamer.login}:`, error);
-          return streamer;
-        }
-      }),
-    );
-
-    console.log(
-      "All streamers updated, returning response with streamers:",
-      updatedStreamers.length,
-    );
-
-    // Write back updated data
-    await writeStreamersFile({ streamers: updatedStreamers });
-
-    return NextResponse.json(
-      { streamers: updatedStreamers },
-      {
-        headers: {
-          "Cache-Control": "no-store, must-revalidate",
-          Pragma: "no-cache",
-        },
-      },
-    );
+    const streamers = await streamerService.getStreamers();
+    return NextResponse.json({ streamers });
   } catch (error) {
-    console.error("Error in GET /api/streamers:", error);
+    console.error("Error fetching streamers:", error);
     return NextResponse.json(
-      {
-        error: "Failed to load streamers",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch streamers" },
       { status: 500 },
     );
   }
 }
 
 export async function POST(request: NextRequest) {
+  if (!isAuthenticated(request)) {
+    return unauthorizedResponse();
+  }
+
   try {
-    if (!isAuthenticated(request)) {
-      return unauthorizedResponse();
-    }
+    const { streamerId } = await request.json();
 
-    const { streamer } = await request.json();
-    let streamersData = await readStreamersFile();
-
-    // Handle first-time use
-    if (!streamersData || !streamersData.streamers) {
-      streamersData = { streamers: [] };
-    }
-
-    // Check if streamer already exists
-    if (streamersData.streamers.some((s: Streamer) => s.id === streamer.id)) {
+    if (!streamerId) {
       return NextResponse.json(
-        { error: "Streamer already exists" },
+        { error: "Streamer ID is required" },
         { status: 400 },
       );
     }
 
-    streamersData.streamers.push(streamer);
-    await writeStreamersFile(streamersData);
+    // Get user data from Twitch
+    const client = await twitchClient.getClient();
+    const userData = await client.users.getUserById(streamerId);
+    if (!userData) {
+      return NextResponse.json(
+        { error: "Streamer not found on Twitch" },
+        { status: 404 },
+      );
+    }
 
-    return NextResponse.json({ success: true });
+    // Get stream data if user is live
+    const stream = await client.streams.getStreamByUserId(streamerId);
+
+    // Create streamer object
+    const streamer: Streamer = {
+      id: userData.id,
+      login: userData.name,
+      displayName: userData.displayName,
+      profileImageUrl: userData.profilePictureUrl,
+      isLive: !!stream,
+      title: stream?.title,
+      gameName: stream?.gameName,
+      viewerCount: stream?.viewers,
+      startedAt: stream?.startDate?.toISOString(),
+    };
+
+    // Add to database
+    await streamerService.upsertStreamer(streamer);
+
+    return NextResponse.json({ success: true, streamer });
   } catch (error) {
-    console.error("Error in POST /api/streamers:", error);
+    console.error("Error adding streamer:", error);
     return NextResponse.json(
-      {
-        error: "Failed to add streamer",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to add streamer" },
       { status: 500 },
     );
   }
 }
 
 export async function DELETE(request: NextRequest) {
+  if (!isAuthenticated(request)) {
+    return unauthorizedResponse();
+  }
+
   try {
-    if (!isAuthenticated(request)) {
-      return unauthorizedResponse();
-    }
-
     const { streamerId } = await request.json();
-    const streamersData = await readStreamersFile();
 
-    // Handle first-time use
-    if (!streamersData || !streamersData.streamers) {
-      return NextResponse.json({ success: true });
+    if (!streamerId) {
+      return NextResponse.json(
+        { error: "Streamer ID is required" },
+        { status: 400 },
+      );
     }
 
-    const updatedStreamers = streamersData.streamers.filter(
-      (s: Streamer) => s.id !== streamerId,
-    );
-    await writeStreamersFile({ streamers: updatedStreamers });
+    // Check if streamer exists
+    const streamer = await streamerService.getStreamerById(streamerId);
+    if (!streamer) {
+      return NextResponse.json(
+        { error: "Streamer not found" },
+        { status: 404 },
+      );
+    }
+
+    // Delete from database
+    await streamerService.deleteStreamer(streamerId);
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error in DELETE /api/streamers:", error);
+    console.error("Error deleting streamer:", error);
     return NextResponse.json(
-      {
-        error: "Failed to remove streamer",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to delete streamer" },
       { status: 500 },
     );
   }
