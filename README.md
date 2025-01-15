@@ -5,15 +5,17 @@
 :collision: Groupe consacré à la communauté francophone de streameurs sur Twitch.tv. <br>
 :tada: L'objectif : rassembler la communauté de streameur et vieweur francophone sur Twitch ainsi que d'aider les streameurs francais à se trouver un auditoire
 
-**_English version_**
+***English version***
 
 :collision: Group dedicated to the French-speaking community of streamers on Twitch.tv. <br>
 :tada: The goal : to bring together the French-speaking streamer and viewer community on Twitch as well as to help French streamers find an audience
 
 ## Social
-
 `Facebook` : facebook.com/TwitchFrOfficiel ✔️ <br>
+:speech_balloon: `Discord` : discord.gg/YNu7dna ✔️ <br>
+:arrow_forward: `App` : twitchfr.glideapp.io ✔️ <br>
 :zzz: `Web` : en construction/ in construction 🚧
+<<<<<<< HEAD
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
@@ -141,3 +143,5 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+=======
+>>>>>>> parent of 072a27d (init)
