@@ -4,23 +4,15 @@ import { generateSessionToken } from '@/middleware/auth';
 
 export async function POST(request: NextRequest) {
   try {
-    // Parse the request body
-    const body = await request.json();
-    
-    // Validate the credentials from the request body
-    const { username, password } = body;
-    
-    if (!username || !password) {
-      return NextResponse.json(
-        { error: 'Username and password are required' },
-        { status: 400 }
-      );
+    // Check if there's an existing valid session
+    const existingSession = request.cookies.get('session_token');
+    if (existingSession?.value) {
+      return NextResponse.json({ status: 'authenticated' });
     }
 
-    // In a real application, you would validate credentials here
-    // For now, we'll just generate a session token
+    // Generate a new session token
     const sessionToken = generateSessionToken();
-
+    
     // Create the response with the session token
     const response = NextResponse.json({ status: 'authenticated' });
 
@@ -32,6 +24,8 @@ export async function POST(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       path: '/',
+      // Set expiration to 24 hours
+      maxAge: 60 * 60 * 24,
     });
 
     return response;
