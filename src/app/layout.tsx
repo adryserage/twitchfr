@@ -18,11 +18,6 @@ export const metadata: Metadata = {
   description: 'French Twitch Streamers Directory',
   manifest: '/manifest.json',
   themeColor: '#9146FF',
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
   icons: {
     apple: '/icons/icon-192x192.png',
   },
@@ -31,6 +26,12 @@ export const metadata: Metadata = {
     statusBarStyle: 'default',
     title: 'TwitchFr',
   },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({
