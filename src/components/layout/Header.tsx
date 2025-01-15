@@ -1,71 +1,69 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
-import { Search } from "lucide-react";
 import { useStreamerStore } from "@/store/streamerStore";
-import { Streamer } from "@/types/twitch";
+import { RefreshCw, Search } from "lucide-react";
+import { useState } from "react";
 
-const Header = () => {
+export default function Header() {
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const streamers = useStreamerStore((state) => state.streamers);
   const setStreamers = useStreamerStore((state) => state.setStreamers);
-  const [originalStreamers, setOriginalStreamers] = useState<Streamer[]>([]);
 
-  // Initialize originalStreamers when streamers change
-  useEffect(() => {
-    if (streamers.length > 0 && originalStreamers.length === 0) {
-      setOriginalStreamers(streamers);
-    }
-  }, [streamers, originalStreamers]);
+  const handleRefresh = async () => {
+    if (isRefreshing) return;
+    
+    setIsRefreshing(true);
+    try {
+      const response = await fetch("/api/streamers", {
+        next: {
+          revalidate: 0, // Bypass cache
+          tags: ["streamers", "live-status"],
+        },
+      });
 
-  const handleSearch = useCallback(
-    (query: string) => {
-      setSearchQuery(query);
-
-      if (!query.trim()) {
-        setStreamers(originalStreamers);
-        return;
+      if (!response.ok) {
+        throw new Error("Failed to refresh streamers");
       }
 
-      const normalizedQuery = query.toLowerCase().trim();
-      const filteredStreamers = originalStreamers.filter(
-        (streamer: Streamer) => {
-          return (
-            streamer.displayName.toLowerCase().includes(normalizedQuery) ||
-            streamer.login.toLowerCase().includes(normalizedQuery) ||
-            (streamer.title &&
-              streamer.title.toLowerCase().includes(normalizedQuery)) ||
-            (streamer.gameName &&
-              streamer.gameName.toLowerCase().includes(normalizedQuery))
-          );
-        },
-      );
+      const data = await response.json();
+      if (!data || !data.streamers) {
+        throw new Error("Invalid response format");
+      }
 
-      setStreamers(filteredStreamers);
-    },
-    [originalStreamers, setStreamers],
-  );
+      setStreamers(data.streamers);
+    } catch (error) {
+      console.error("Error refreshing streamers:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    // Implement search logic here using the streamer store
+  };
 
   return (
-    <header className="fixed top-0 left-16 right-0 h-14 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="flex h-full w-full px-4">
-        <div className="flex flex-1 items-center">
-          <div className="w-full">
-            <div className="relative w-full">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="search"
-                placeholder="Search streamers..."
-                className="h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 pl-9"
-                value={searchQuery}
-                onChange={(e) => handleSearch(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
+    <header className="fixed top-0 right-0 left-16 h-16 bg-background border-b z-50 flex items-center px-4 gap-4">
+      <div className="relative flex-1 max-w-md">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Search streamers..."
+          value={searchQuery}
+          onChange={handleSearch}
+          className="w-full pl-10 pr-4 py-2 bg-muted rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+        />
       </div>
+      <button
+        onClick={handleRefresh}
+        disabled={isRefreshing}
+        className="p-2 hover:bg-muted rounded-md transition-colors disabled:opacity-50"
+        title="Refresh streamers"
+      >
+        <RefreshCw className={`h-5 w-5 ${isRefreshing ? "animate-spin" : ""}`} />
+      </button>
     </header>
   );
-};
-
-export default Header;
+}
