@@ -1,5 +1,7 @@
 import { StreamerService } from './streamerService';
 import { twitchClient } from '@/utils/twitchClient';
+import { CACHE_TAGS } from '@/lib/cache';
+import { revalidateTag } from 'next/cache';
 
 export class LiveStatusService {
     private streamerService: StreamerService;
@@ -49,14 +51,18 @@ export class LiveStatusService {
                 const streams = await client.streams.getStreamsByUserIds(userIds);
                 const liveStreamIds = new Set(streams.map(s => s.userId));
 
-                // Update live status for each streamer in the batch
-                await Promise.all(batch.map(streamer => 
-                    this.streamerService.updateLiveStatus(
-                        streamer.id, 
-                        liveStreamIds.has(streamer.id)
-                    )
-                ));
+                // Update each streamer's status
+                await Promise.all(
+                    batch.map(async (streamer) => {
+                        const isLive = liveStreamIds.has(streamer.id);
+                        await this.streamerService.updateLiveStatus(streamer.id, isLive);
+                    })
+                );
             }
+
+            // Revalidate cache after updating live statuses
+            revalidateTag(CACHE_TAGS.LIVE_STATUS);
+            revalidateTag(CACHE_TAGS.STREAMERS);
         } catch (error) {
             console.error('Error updating live statuses:', error);
         } finally {

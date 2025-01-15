@@ -5,6 +5,8 @@ import { isAuthenticated, unauthorizedResponse } from "@/middleware/auth";
 import { twitchClient } from "@/utils/twitchClient";
 import { StreamerService } from "@/services/streamerService";
 import { LiveStatusService } from "@/services/liveStatusService";
+import { getCachedStreamers, getCachedLiveStatus, CACHE_TAGS } from "@/lib/cache";
+import { revalidateTag } from "next/cache";
 
 // Initialize services
 const streamerService = new StreamerService();
@@ -15,7 +17,7 @@ liveStatusService.startPeriodicUpdates();
 
 export async function GET() {
   try {
-    const streamers = await streamerService.getStreamers();
+    const streamers = await getCachedStreamers(() => streamerService.getStreamers());
     return NextResponse.json({ streamers });
   } catch (error) {
     console.error("Error fetching streamers:", error);
@@ -51,26 +53,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get stream data if user is live
-    const stream = await client.streams.getStreamByUserId(streamerId);
-
     // Create streamer object
     const streamer: Streamer = {
       id: userData.id,
       login: userData.name,
       displayName: userData.displayName,
       profileImageUrl: userData.profilePictureUrl,
-      isLive: !!stream,
-      title: stream?.title,
-      gameName: stream?.gameName,
-      viewerCount: stream?.viewers,
-      startedAt: stream?.startDate?.toISOString(),
+      isLive: false,
     };
 
-    // Add to database
+    // Save to database
     await streamerService.upsertStreamer(streamer);
 
-    return NextResponse.json({ success: true, streamer });
+    // Revalidate cache
+    revalidateTag(CACHE_TAGS.STREAMERS);
+
+    return NextResponse.json({ streamer });
   } catch (error) {
     console.error("Error adding streamer:", error);
     return NextResponse.json(
@@ -95,19 +93,12 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // Check if streamer exists
-    const streamer = await streamerService.getStreamerById(streamerId);
-    if (!streamer) {
-      return NextResponse.json(
-        { error: "Streamer not found" },
-        { status: 404 },
-      );
-    }
-
-    // Delete from database
     await streamerService.deleteStreamer(streamerId);
 
-    return NextResponse.json({ success: true });
+    // Revalidate cache
+    revalidateTag(CACHE_TAGS.STREAMERS);
+
+    return new NextResponse(null, { status: 204 });
   } catch (error) {
     console.error("Error deleting streamer:", error);
     return NextResponse.json(

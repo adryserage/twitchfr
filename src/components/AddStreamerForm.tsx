@@ -46,12 +46,13 @@ export function AddStreamerForm() {
     }));
 
     try {
-      const response = await fetch("/api/twitch", {
+      const response = await fetch("/api/streamers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.NEXT_PUBLIC_API_SECRET}`
         },
-        body: JSON.stringify({ username: formState.username }),
+        body: JSON.stringify({ streamerId: formState.username }),
       });
 
       if (!response.ok) {
@@ -59,36 +60,18 @@ export function AddStreamerForm() {
         throw new Error(errorData.details || errorData.error);
       }
 
-      const streamerData = (await response.json()) as Streamer;
-
-      // Add streamer to the database
-      const dbResponse = await fetch("/api/streamers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ streamer: streamerData }),
-      });
-
-      if (!dbResponse.ok) {
-        const errorData = (await dbResponse.json()) as ApiError;
-        throw new Error(errorData.details || errorData.error);
-      }
-
-      // Update local state
-      addStreamer(streamerData);
+      const streamerData = await response.json();
+      addStreamer(streamerData.streamer);
 
       setFormState((prev) => ({
         ...prev,
-        isLoading: false,
-        success: true,
         username: "",
+        isLoading: false,
+        error: null,
+        success: true,
       }));
 
-      // Redirect to the streamers list page after a short delay
-      setTimeout(() => {
-        router.push("/list");
-      }, 1500);
+      router.refresh();
     } catch (error: unknown) {
       console.error("Error adding streamer:", error);
       setFormState((prev) => ({

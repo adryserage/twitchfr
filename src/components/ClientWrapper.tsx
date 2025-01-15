@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { ReactNode, useEffect } from 'react';
 import { useStreamerStore } from '@/store/streamerStore';
 import type { StreamerStore } from '@/types/twitch';
+import { useRouter } from 'next/navigation';
 
 const StreamerList = dynamic(() => import('@/components/StreamerList').then(mod => mod.StreamerList), { ssr: false });
 const Sidebar = dynamic(() => import('@/components/layout/Sidebar'), { ssr: false });
@@ -24,18 +25,17 @@ export function ClientLayout({ children }: { children: ReactNode }) {
 
 export function ClientWrapper({ children }: { children: ReactNode }) {
   const setStreamers = useStreamerStore((state: StreamerStore) => state.setStreamers);
+  const router = useRouter();
 
   useEffect(() => {
     const loadStreamers = async () => {
       try {
         console.log('ClientWrapper: Starting to fetch streamers...');
         const response = await fetch('/api/streamers', {
-          method: 'GET',
-          headers: {
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          },
-          next: { revalidate: 0 }
+          next: { 
+            revalidate: 60, // Cache for 1 minute
+            tags: ['streamers', 'live-status']
+          }
         });
         
         if (!response.ok) {
@@ -49,19 +49,21 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
           throw new Error('Invalid response format');
         }
 
-        console.log('ClientWrapper: Successfully loaded streamers:', {
-          count: data.streamers.length,
-          streamers: data.streamers,
-        });
-        
         setStreamers(data.streamers);
       } catch (error) {
-        console.error('ClientWrapper: Error loading streamers:', error instanceof Error ? error.message : 'Unknown error');
+        console.error('ClientWrapper: Error loading streamers:', error);
       }
     };
 
     loadStreamers();
-  }, [setStreamers]);
+
+    // Set up periodic refresh
+    const refreshInterval = setInterval(() => {
+      router.refresh();
+    }, 60000); // Refresh every minute
+
+    return () => clearInterval(refreshInterval);
+  }, [setStreamers, router]);
 
   return <>{children}</>;
 }
