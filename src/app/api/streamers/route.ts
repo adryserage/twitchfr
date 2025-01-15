@@ -16,8 +16,22 @@ liveStatusService.startPeriodicUpdates();
 
 export async function GET() {
   try {
-    const streamers = await getCachedStreamers(async () => streamerService.getStreamers());
-    return NextResponse.json({ streamers });
+    // Get fresh data from the database
+    const streamers = await streamerService.getStreamers();
+    
+    // Update cache for future requests
+    await getCachedStreamers(async () => streamers);
+    
+    // Set cache control headers
+    return NextResponse.json(
+      { streamers },
+      {
+        headers: {
+          'Cache-Control': 'no-store, must-revalidate',
+          'Pragma': 'no-cache',
+        },
+      }
+    );
   } catch (error) {
     console.error("Error fetching streamers:", error);
     return NextResponse.json(

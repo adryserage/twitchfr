@@ -43,9 +43,9 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
       try {
         console.log("ClientWrapper: Starting to fetch streamers...");
         const response = await fetch("/api/streamers", {
-          next: {
-            revalidate: 60, // Cache for 1 minute
-            tags: ["streamers", "live-status"],
+          cache: 'no-store', // Disable cache to always get fresh data
+          headers: {
+            'Cache-Control': 'no-cache',
           },
         });
 
@@ -63,6 +63,7 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
           throw new Error("Invalid response format");
         }
 
+        console.log("ClientWrapper: Successfully loaded streamers:", data.streamers);
         setStreamers(data.streamers);
       } catch (error) {
         console.error("ClientWrapper: Error loading streamers:", error);
@@ -72,12 +73,10 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
     loadStreamers();
 
     // Set up periodic refresh
-    const refreshInterval = setInterval(() => {
-      router.refresh();
-    }, 60000); // Refresh every minute
+    const refreshInterval = setInterval(loadStreamers, 30000); // Refresh every 30 seconds
 
     return () => clearInterval(refreshInterval);
-  }, [setStreamers, router]);
+  }, [setStreamers]);
 
   return <>{children}</>;
 }

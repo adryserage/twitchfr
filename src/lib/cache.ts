@@ -6,8 +6,8 @@ export const CACHE_TAGS = {
 } as const;
 
 export const CACHE_TIMES = {
-  STREAMERS: 60 * 60, // 1 hour
-  LIVE_STATUS: 60, // 1 minute
+  STREAMERS: 60, // 1 minute
+  LIVE_STATUS: 30, // 30 seconds
 } as const;
 
 export const getCachedStreamers = unstable_cache(
