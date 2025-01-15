@@ -21,10 +21,10 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
   const [lastUpdate, setLastUpdate] = useState(0);
 
   useEffect(() => {
-    console.log('StreamerList: Current streamers:', streamers);
+    console.log("StreamerList: Current streamers:", streamers);
     const updateStatus = async () => {
       if (streamers.length === 0) {
-        console.log('StreamerList: No streamers to update');
+        console.log("StreamerList: No streamers to update");
         setIsLoading(false);
         return;
       }
@@ -32,15 +32,15 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
       // Check if we need to update (every 30 seconds)
       const now = Date.now();
       if (now - lastUpdate < 30000) {
-        console.log('StreamerList: Skipping update, too soon');
+        console.log("StreamerList: Skipping update, too soon");
         setIsLoading(false);
         return;
       }
 
       try {
-        console.log('StreamerList: Updating streamer statuses...');
+        console.log("StreamerList: Updating streamer statuses...");
         const updatedStreamers = await updateStreamersStatus(streamers);
-        console.log('StreamerList: Updated streamers:', updatedStreamers);
+        console.log("StreamerList: Updated streamers:", updatedStreamers);
         updatedStreamers.forEach((streamer) => {
           updateStreamerStatus(streamer.id, streamer.isLive, {
             title: streamer.title,
@@ -79,11 +79,11 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
     );
   }
 
-  console.log('StreamerList: Filtering streamers...', {
+  console.log("StreamerList: Filtering streamers...", {
     showOnlineOnly,
     pathname,
     totalStreamers: streamers.length,
-    liveStreamers: streamers.filter(s => s.isLive).length
+    liveStreamers: streamers.filter((s) => s.isLive).length,
   });
 
   // Filter streamers based on showOnlineOnly prop or current page
@@ -96,9 +96,9 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
   const displayedStreamers =
     pathname === "/" ? filteredStreamers.slice(0, 6) : filteredStreamers;
 
-  console.log('StreamerList: Final streamers to display:', {
+  console.log("StreamerList: Final streamers to display:", {
     filtered: filteredStreamers.length,
-    displayed: displayedStreamers.length
+    displayed: displayedStreamers.length,
   });
 
   return (

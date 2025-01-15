@@ -1,26 +1,30 @@
-import { Streamer } from '@/types/twitch';
-import { streamerCache } from './cache';
+import { Streamer } from "@/types/twitch";
+import { streamerCache } from "./cache";
 
 let isInitialized = false;
 
 export const initializeTwitchApi = async () => {
   try {
-    const response = await fetch('/api/twitch');
+    const response = await fetch("/api/twitch");
     if (!response.ok) {
       const data = await response.json();
-      throw new Error(data.error || 'Failed to initialize Twitch API');
+      throw new Error(data.error || "Failed to initialize Twitch API");
     }
     isInitialized = true;
-    console.log('Twitch API initialized successfully');
+    console.log("Twitch API initialized successfully");
   } catch (error) {
-    console.error('Failed to initialize Twitch API:', error);
+    console.error("Failed to initialize Twitch API:", error);
     throw error;
   }
 };
 
-export const getStreamerInfo = async (username: string): Promise<Streamer | null> => {
+export const getStreamerInfo = async (
+  username: string,
+): Promise<Streamer | null> => {
   if (!isInitialized) {
-    throw new Error('Twitch API not initialized. Please check your credentials.');
+    throw new Error(
+      "Twitch API not initialized. Please check your credentials.",
+    );
   }
 
   // Check cache first
@@ -32,10 +36,10 @@ export const getStreamerInfo = async (username: string): Promise<Streamer | null
 
   console.log(`Cache miss for streamer: ${username}, fetching from API...`);
   try {
-    const response = await fetch('/api/twitch', {
-      method: 'POST',
+    const response = await fetch("/api/twitch", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ username }),
     });
@@ -45,10 +49,10 @@ export const getStreamerInfo = async (username: string): Promise<Streamer | null
         return null;
       }
       const data = await response.json();
-      throw new Error(data.error || 'Failed to fetch streamer info');
+      throw new Error(data.error || "Failed to fetch streamer info");
     }
 
-    const streamer = await response.json() as Streamer;
+    const streamer = (await response.json()) as Streamer;
     streamerCache.set(username, streamer);
     return streamer;
   } catch (error) {
@@ -57,9 +61,13 @@ export const getStreamerInfo = async (username: string): Promise<Streamer | null
   }
 };
 
-export const updateStreamersStatus = async (streamers: Streamer[]): Promise<Streamer[]> => {
+export const updateStreamersStatus = async (
+  streamers: Streamer[],
+): Promise<Streamer[]> => {
   if (!isInitialized) {
-    throw new Error('Twitch API not initialized. Please check your credentials.');
+    throw new Error(
+      "Twitch API not initialized. Please check your credentials.",
+    );
   }
 
   try {
@@ -74,7 +82,9 @@ export const updateStreamersStatus = async (streamers: Streamer[]): Promise<Stre
     for (const batch of batches) {
       const batchPromises = batch.map(async (streamer) => {
         // Check cache first
-        const cachedStreamer = streamerCache.get(streamer.login) as Streamer | null;
+        const cachedStreamer = streamerCache.get(
+          streamer.login,
+        ) as Streamer | null;
         if (cachedStreamer) {
           console.log(`Cache hit for streamer: ${streamer.login}`);
           return cachedStreamer;
@@ -94,13 +104,13 @@ export const updateStreamersStatus = async (streamers: Streamer[]): Promise<Stre
 
       // Add a small delay between batches to avoid rate limits
       if (batches.length > 1) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
     }
 
     return updatedStreamers;
   } catch (error) {
-    console.error('Error updating streamer statuses:', error);
+    console.error("Error updating streamer statuses:", error);
     return streamers;
   }
 };

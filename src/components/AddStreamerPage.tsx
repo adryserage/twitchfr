@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { FC } from 'react';
-import { useStreamerStore } from '@/store/streamerStore';
-import { AddStreamerForm } from './AddStreamerForm';
-import { StreamerCard } from './StreamerCard';
+import { FC } from "react";
+import { useStreamerStore } from "@/store/streamerStore";
+import { AddStreamerForm } from "./AddStreamerForm";
+import { StreamerCard } from "./StreamerCard";
 
 export const AddStreamerPage: FC = () => {
   const streamers = useStreamerStore((state) => state.streamers);
-  
+
   // Get the 5 most recently added streamers
   const recentStreamers = [...streamers]
     .sort((a, b) => b.id.localeCompare(a.id))

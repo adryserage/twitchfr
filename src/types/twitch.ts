@@ -19,6 +19,6 @@ export interface StreamerStore {
   updateStreamerStatus: (
     streamerId: string,
     isLive: boolean,
-    liveData?: Partial<Streamer>
+    liveData?: Partial<Streamer>,
   ) => void;
 }

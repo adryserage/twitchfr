@@ -19,15 +19,15 @@ class RateLimiter {
 
   canMakeCall(streamerId: string): boolean {
     const now = Date.now();
-    
+
     // Clean up old entries
     this.lastCalls = this.lastCalls.filter(
-      call => now - call.timestamp < this.timeWindow
+      (call) => now - call.timestamp < this.timeWindow,
     );
 
     // Check if this streamer has been called recently
     const streamerCall = this.lastCalls.find(
-      call => call.streamerId === streamerId
+      (call) => call.streamerId === streamerId,
     );
 
     if (streamerCall) {
@@ -40,12 +40,12 @@ class RateLimiter {
 
   recordCall(streamerId: string): void {
     const now = Date.now();
-    
+
     // Remove old entry for this streamer if it exists
     this.lastCalls = this.lastCalls.filter(
-      call => call.streamerId !== streamerId
+      (call) => call.streamerId !== streamerId,
     );
-    
+
     // Add new entry
     this.lastCalls.push({ timestamp: now, streamerId });
   }
@@ -53,7 +53,7 @@ class RateLimiter {
   getTimeUntilNextCall(streamerId: string): number {
     const now = Date.now();
     const streamerCall = this.lastCalls.find(
-      call => call.streamerId === streamerId
+      (call) => call.streamerId === streamerId,
     );
 
     if (!streamerCall) return 0;

@@ -32,7 +32,8 @@ export default function Sidebar() {
                   isActive &&
                     "bg-purple-100 dark:bg-purple-900 text-purple-500 dark:text-purple-400",
                 )}
-                title={label}>
+                title={label}
+              >
                 <Icon className="w-5 h-5" />
               </Link>
             );

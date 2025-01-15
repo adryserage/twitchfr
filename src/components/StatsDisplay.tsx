@@ -15,12 +15,15 @@ export const StatsDisplay: FC<{ type?: "online" | "list" }> = ({
         (acc, s) => acc + (s.viewerCount || 0),
         0,
       );
-      const categories = onlineStreamers.reduce((acc, s) => {
-        if (s.gameName) {
-          acc[s.gameName] = (acc[s.gameName] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>);
+      const categories = onlineStreamers.reduce(
+        (acc, s) => {
+          if (s.gameName) {
+            acc[s.gameName] = (acc[s.gameName] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       const mostPopularCategory =
         Object.entries(categories).sort(([, a], [, b]) => b - a)[0]?.[0] ||

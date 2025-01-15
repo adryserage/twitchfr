@@ -26,7 +26,8 @@ export const StreamerCard: FC<StreamerCardProps> = ({ streamer }) => {
         streamer.isLive
           ? "border-green-500 dark:border-green-400"
           : "border-gray-200 dark:border-gray-700"
-      } bg-white dark:bg-gray-800 overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md`}>
+      } bg-white dark:bg-gray-800 overflow-hidden shadow-sm transition-all duration-200 hover:shadow-md`}
+    >
       <div className="p-4">
         <div className="flex items-start justify-between">
           <div className="flex items-center space-x-3">
@@ -57,7 +58,8 @@ export const StreamerCard: FC<StreamerCardProps> = ({ streamer }) => {
               target="_blank"
               rel="noopener noreferrer"
               className="p-1 text-gray-400 hover:text-purple-500 dark:hover:text-purple-400 transition-colors"
-              title="Voir sur Twitch">
+              title="Voir sur Twitch"
+            >
               <ExternalLink className="w-5 h-5" />
             </a>
           </div>
@@ -96,7 +98,8 @@ export const StreamerCard: FC<StreamerCardProps> = ({ streamer }) => {
           href={`https://twitch.tv/${streamer.login}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="block w-full bg-purple-600 hover:bg-purple-700 text-white text-center py-2 text-sm font-medium transition-colors">
+          className="block w-full bg-purple-600 hover:bg-purple-700 text-white text-center py-2 text-sm font-medium transition-colors"
+        >
           Regarder le stream
         </a>
       )}

@@ -28,7 +28,7 @@ export function AddStreamerForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!formState.username.trim()) {
       setFormState((prev) => ({
         ...prev,
@@ -87,7 +87,8 @@ export function AddStreamerForm() {
       setFormState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : "Une erreur est survenue",
+        error:
+          error instanceof Error ? error.message : "Une erreur est survenue",
       }));
     }
   };

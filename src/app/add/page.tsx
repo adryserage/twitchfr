@@ -44,7 +44,8 @@ export default function AddStreamerPage() {
             <Suspense
               fallback={
                 <div className="h-20 bg-gray-100 dark:bg-gray-700 rounded-lg animate-pulse" />
-              }>
+              }
+            >
               <StreamerList />
             </Suspense>
           </div>

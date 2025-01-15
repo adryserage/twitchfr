@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import { useState, useCallback, useEffect } from 'react';
-import { Search } from 'lucide-react';
-import { useStreamerStore } from '@/store/streamerStore';
-import { Streamer } from '@/types/twitch';
+import { useState, useCallback, useEffect } from "react";
+import { Search } from "lucide-react";
+import { useStreamerStore } from "@/store/streamerStore";
+import { Streamer } from "@/types/twitch";
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const streamers = useStreamerStore((state) => state.streamers);
   const setStreamers = useStreamerStore((state) => state.setStreamers);
   const [originalStreamers, setOriginalStreamers] = useState<Streamer[]>([]);
@@ -18,26 +18,33 @@ const Header = () => {
     }
   }, [streamers, originalStreamers]);
 
-  const handleSearch = useCallback((query: string) => {
-    setSearchQuery(query);
-    
-    if (!query.trim()) {
-      setStreamers(originalStreamers);
-      return;
-    }
+  const handleSearch = useCallback(
+    (query: string) => {
+      setSearchQuery(query);
 
-    const normalizedQuery = query.toLowerCase().trim();
-    const filteredStreamers = originalStreamers.filter((streamer: Streamer) => {
-      return (
-        streamer.displayName.toLowerCase().includes(normalizedQuery) ||
-        streamer.login.toLowerCase().includes(normalizedQuery) ||
-        (streamer.title && streamer.title.toLowerCase().includes(normalizedQuery)) ||
-        (streamer.gameName && streamer.gameName.toLowerCase().includes(normalizedQuery))
+      if (!query.trim()) {
+        setStreamers(originalStreamers);
+        return;
+      }
+
+      const normalizedQuery = query.toLowerCase().trim();
+      const filteredStreamers = originalStreamers.filter(
+        (streamer: Streamer) => {
+          return (
+            streamer.displayName.toLowerCase().includes(normalizedQuery) ||
+            streamer.login.toLowerCase().includes(normalizedQuery) ||
+            (streamer.title &&
+              streamer.title.toLowerCase().includes(normalizedQuery)) ||
+            (streamer.gameName &&
+              streamer.gameName.toLowerCase().includes(normalizedQuery))
+          );
+        },
       );
-    });
 
-    setStreamers(filteredStreamers);
-  }, [originalStreamers, setStreamers]);
+      setStreamers(filteredStreamers);
+    },
+    [originalStreamers, setStreamers],
+  );
 
   return (
     <header className="fixed top-0 left-16 right-0 h-14 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

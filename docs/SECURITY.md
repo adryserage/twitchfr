@@ -16,30 +16,35 @@
 ## Security Measures
 
 ### Authentication
+
 - OAuth 2.0 with Twitch
 - Secure session management
 - CSRF protection
 - Rate limiting
 
 ### Data Protection
+
 - HTTPS only
 - Encrypted data at rest
 - Secure API endpoints
 - Input validation
 
 ### Compliance
+
 - GDPR compliant
 - CCPA compliant
 - Regular security audits
 - Penetration testing
 
 ### Best Practices
+
 - Regular dependency updates
 - Security headers
 - XSS prevention
 - SQL injection protection
 
 ## Security Checklist
+
 - [ ] Enable CSP headers
 - [ ] Set up rate limiting
 - [ ] Configure CORS

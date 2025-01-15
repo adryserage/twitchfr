@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 
 const API_SECRET = process.env.API_SECRET;
 
@@ -12,13 +12,16 @@ export function generateSessionToken() {
 // Verify if the request is from an authenticated session
 export function isAuthenticated(request: NextRequest) {
   // For internal API calls (e.g., from server components)
-  const authHeader = request.headers.get('authorization');
-  if (authHeader?.startsWith('Bearer ') && authHeader.split(' ')[1] === API_SECRET) {
+  const authHeader = request.headers.get("authorization");
+  if (
+    authHeader?.startsWith("Bearer ") &&
+    authHeader.split(" ")[1] === API_SECRET
+  ) {
     return true;
   }
 
   // For client-side requests
-  const sessionToken = request.cookies.get('session_token')?.value;
+  const sessionToken = request.cookies.get("session_token")?.value;
   return sessionToken ? verifySessionToken(sessionToken) : false;
 }
 
@@ -30,8 +33,5 @@ function verifySessionToken(token: string): boolean {
 }
 
 export function unauthorizedResponse() {
-  return NextResponse.json(
-    { error: 'Unauthorized' },
-    { status: 401 }
-  );
+  return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 }
