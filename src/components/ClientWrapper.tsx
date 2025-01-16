@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { ReactNode, useEffect } from "react";
 import { useStreamerStore } from "@/store/streamerStore";
 import type { StreamerStore } from "@/types/twitch";
-import { useRouter } from "next/navigation";
 
 const StreamerList = dynamic(
   () => import("@/components/StreamerList").then((mod) => mod.StreamerList),
@@ -36,7 +35,6 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
   const setStreamers = useStreamerStore(
     (state: StreamerStore) => state.setStreamers,
   );
-  const router = useRouter();
 
   useEffect(() => {
     const loadStreamers = async () => {

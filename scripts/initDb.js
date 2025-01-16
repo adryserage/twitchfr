@@ -6,50 +6,30 @@ const defaultStreamers = {
     {
       id: "71092938",
       login: "xqc",
-      displayName: "xQc",
-      profileImageUrl:
+      display_name: "xQc",
+      profile_image_url:
         "https://static-cdn.jtvnw.net/jtv_user_pictures/xqc-profile_image-9298dca608632101-300x300.jpeg",
-      isLive: false,
-      title: "",
-      gameName: "",
-      viewerCount: 0,
-      startedAt: "",
     },
     {
       id: "26301881",
       login: "sodapoppin",
-      displayName: "sodapoppin",
-      profileImageUrl:
+      display_name: "sodapoppin",
+      profile_image_url:
         "https://static-cdn.jtvnw.net/jtv_user_pictures/sodapoppin-profile_image-2a00c6f0b3dd0840-300x300.png",
-      isLive: false,
-      title: "",
-      gameName: "",
-      viewerCount: 0,
-      startedAt: "",
     },
     {
       id: "121059319",
       login: "kamet0",
-      displayName: "Kamet0",
-      profileImageUrl:
+      display_name: "Kamet0",
+      profile_image_url:
         "https://static-cdn.jtvnw.net/jtv_user_pictures/9e12862d-a8d0-4df2-81aa-e2241022dc98-profile_image-300x300.jpg",
-      isLive: false,
-      title: "",
-      gameName: "",
-      viewerCount: 0,
-      startedAt: "",
     },
     {
       id: "50597026",
       login: "squeezie",
-      displayName: "Squeezie",
-      profileImageUrl:
+      display_name: "Squeezie",
+      profile_image_url:
         "https://static-cdn.jtvnw.net/jtv_user_pictures/a2592e98-5ba6-4c9a-9d9e-cf036d6f64c2-profile_image-300x300.jpg",
-      isLive: false,
-      title: "",
-      gameName: "",
-      viewerCount: 0,
-      startedAt: "",
     },
   ],
 };

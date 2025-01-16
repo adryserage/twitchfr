@@ -43,7 +43,6 @@ const StreamerList = ({ showOnlineOnly }: StreamerListProps = {}) => {
         console.log("StreamerList: Updated streamers:", updatedStreamers);
         updatedStreamers.forEach((streamer) => {
           updateStreamerStatus(streamer.id, streamer.isLive, {
-            title: streamer.title,
             gameName: streamer.gameName,
             viewerCount: streamer.viewerCount,
             startedAt: streamer.startedAt,

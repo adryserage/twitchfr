@@ -7,7 +7,6 @@ import { useState } from "react";
 export default function Header() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const streamers = useStreamerStore((state) => state.streamers);
   const setStreamers = useStreamerStore((state) => state.setStreamers);
 
   const handleRefresh = async () => {

@@ -72,7 +72,10 @@ export async function POST(request: NextRequest) {
       login: userData.name,
       displayName: userData.displayName,
       profileImageUrl: userData.profilePictureUrl,
-      isLive: false,
+      lastLiveCheck: new Date(),
+      updatedAt: new Date(),
+      addedAt: new Date(),
+      isLive: false
     };
 
     // Save to database

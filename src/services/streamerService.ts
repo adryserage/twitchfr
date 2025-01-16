@@ -5,60 +5,56 @@ export interface Streamer {
   login: string;
   displayName: string;
   profileImageUrl: string;
-  isLive: boolean;
-  title?: string;
-  gameName?: string;
-  viewerCount?: number;
-  startedAt?: string;
+  addedAt?: Date;
   lastLiveCheck?: Date;
+  updatedAt?: Date;
+}
+
+interface DbStreamerRow {
+  id: string;
+  login: string;
+  display_name: string;
+  profile_image_url: string;
+  added_at?: Date;
+  last_live_check?: Date;
+  updated_at?: Date;
 }
 
 export class StreamerService {
   private static LIVE_STATUS_THRESHOLD_MINUTES = 5;
 
-  async upsertStreamer(streamer: Streamer): Promise<void> {
+  async upsertStreamer(streamer: {
+    id: string;
+    login: string;
+    displayName: string;
+    profileImageUrl: string;
+  }): Promise<Streamer> {
+    const query = `
+      INSERT INTO streamers (
+        id, login, display_name, profile_image_url
+      ) VALUES (
+        $1, $2, $3, $4
+      )
+      ON CONFLICT (id) DO UPDATE
+      SET
+        login = EXCLUDED.login,
+        display_name = EXCLUDED.display_name,
+        profile_image_url = EXCLUDED.profile_image_url,
+        updated_at = CURRENT_TIMESTAMP
+      RETURNING *;
+    `;
+
+    const values = [
+      streamer.id,
+      streamer.login,
+      streamer.displayName,
+      streamer.profileImageUrl,
+    ];
+
     const client = await getClient();
     try {
-      await client.query('BEGIN');
-      
-      const query = `
-        INSERT INTO streamers (
-          id, login, display_name, profile_image_url, 
-          is_live, title, game_name, viewer_count, started_at,
-          last_live_check
-        ) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, CURRENT_TIMESTAMP)
-        ON CONFLICT (id) DO UPDATE SET
-          login = EXCLUDED.login,
-          display_name = EXCLUDED.display_name,
-          profile_image_url = EXCLUDED.profile_image_url,
-          is_live = EXCLUDED.is_live,
-          title = EXCLUDED.title,
-          game_name = EXCLUDED.game_name,
-          viewer_count = EXCLUDED.viewer_count,
-          started_at = EXCLUDED.started_at,
-          last_live_check = CURRENT_TIMESTAMP,
-          updated_at = CURRENT_TIMESTAMP
-      `;
-
-      const values = [
-        streamer.id,
-        streamer.login,
-        streamer.displayName,
-        streamer.profileImageUrl,
-        streamer.isLive,
-        streamer.title,
-        streamer.gameName,
-        streamer.viewerCount,
-        streamer.startedAt,
-      ];
-
-      await client.query(query, values);
-      await client.query('COMMIT');
-    } catch (error) {
-      await client.query('ROLLBACK');
-      console.error("Error upserting streamer:", error);
-      throw error;
+      const result = await client.query(query, values);
+      return result.rows[0];
     } finally {
       client.release();
     }
@@ -108,16 +104,24 @@ export class StreamerService {
   }
 
   async getStreamers(): Promise<Streamer[]> {
+    const query = `
+      SELECT *
+      FROM streamers
+      ORDER BY updated_at DESC;
+    `;
+
     const client = await getClient();
     try {
-      const result = await client.query(`
-        SELECT * FROM streamers 
-        ORDER BY is_live DESC, viewer_count DESC NULLS LAST
-      `);
-      return result.rows.map(this.mapRowToStreamer);
-    } catch (error) {
-      console.error("Error fetching streamers:", error);
-      throw error;
+      const result = await client.query(query);
+      return result.rows.map(row => ({
+        id: row.id,
+        login: row.login,
+        displayName: row.display_name,
+        profileImageUrl: row.profile_image_url,
+        addedAt: row.added_at,
+        lastLiveCheck: row.last_live_check,
+        updatedAt: row.updated_at
+      }));
     } finally {
       client.release();
     }
@@ -157,18 +161,15 @@ export class StreamerService {
     }
   }
 
-  private mapRowToStreamer(row: any): Streamer {
+  private mapRowToStreamer(row: DbStreamerRow): Streamer {
     return {
       id: row.id,
       login: row.login,
       displayName: row.display_name,
       profileImageUrl: row.profile_image_url,
-      isLive: row.is_live,
-      title: row.title,
-      gameName: row.game_name,
-      viewerCount: row.viewer_count,
-      startedAt: row.started_at,
+      addedAt: row.added_at,
       lastLiveCheck: row.last_live_check,
+      updatedAt: row.updated_at
     };
   }
 }
