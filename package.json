@@ -8,9 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "initdb": "node --loader ts-node/esm src/scripts/initDb.ts",
-    "security:audit": "next-secure-headers --audit",
-    "analyze": "ANALYZE=true next build"
+    "security:audit": "next-secure-headers --audit"
   },
   "dependencies": {
     "@next/bundle-analyzer": "^15.1.4",
@@ -41,7 +39,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
-    "@types/node": "^20",
+    "@types/node": "^20.17.13",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@typescript-eslint/eslint-plugin": "^6.0.0",

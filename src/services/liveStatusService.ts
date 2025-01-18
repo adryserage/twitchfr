@@ -12,7 +12,7 @@ export class LiveStatusService {
     this.streamerService = new StreamerService();
   }
 
-  startPeriodicUpdates(intervalMs: number = 60000) {
+  startPeriodicUpdates(intervalMs: number = 60000): void {
     // Default to 1 minute
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
@@ -26,14 +26,14 @@ export class LiveStatusService {
     this.updateLiveStatuses().catch(console.error);
   }
 
-  stopPeriodicUpdates() {
+  stopPeriodicUpdates(): void {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
     }
   }
 
-  private async updateLiveStatuses() {
+  private async updateLiveStatuses(): Promise<void> {
     if (this.isUpdating) return;
     this.isUpdating = true;
 

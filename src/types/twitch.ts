@@ -3,13 +3,12 @@ export interface Streamer {
   login: string;
   displayName: string;
   profileImageUrl: string;
-  addedAt: Date;
-  lastLiveCheck: Date;
-  updatedAt: Date;
   isLive: boolean;
-  viewerCount?: number;
+  title?: string;
   gameName?: string;
+  viewerCount?: number;
   startedAt?: string;
+  addedAt?: string;
 }
 
 export interface StreamerStore {

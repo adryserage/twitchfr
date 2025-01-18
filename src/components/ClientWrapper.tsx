@@ -41,9 +41,9 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
       try {
         console.log("ClientWrapper: Starting to fetch streamers...");
         const response = await fetch("/api/streamers", {
-          cache: 'no-store', // Disable cache to always get fresh data
+          cache: "no-store", // Disable cache to always get fresh data
           headers: {
-            'Cache-Control': 'no-cache',
+            "Cache-Control": "no-cache",
           },
         });
 
@@ -61,7 +61,10 @@ export function ClientWrapper({ children }: { children: ReactNode }) {
           throw new Error("Invalid response format");
         }
 
-        console.log("ClientWrapper: Successfully loaded streamers:", data.streamers);
+        console.log(
+          "ClientWrapper: Successfully loaded streamers:",
+          data.streamers,
+        );
         setStreamers(data.streamers);
       } catch (error) {
         console.error("ClientWrapper: Error loading streamers:", error);

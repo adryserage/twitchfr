@@ -1,10 +1,10 @@
-import { Pool, type PoolClient } from 'pg';
+import { Pool, type PoolClient } from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 interface ExtendedPoolClient extends PoolClient {
-  lastQuery?: Parameters<PoolClient['query']>;
+  lastQuery?: Parameters<PoolClient["query"]>;
 }
 
 if (!process.env.DATABASE_URL) {
@@ -22,25 +22,30 @@ const pool = new Pool({
   maxUses: 7500, // Close a connection after it has been used 7500 times
 });
 
-pool.on('error', (err) => {
-  console.error('Unexpected error on idle client', err);
+pool.on("error", (err) => {
+  console.error("Unexpected error on idle client", err);
 });
 
-pool.on('connect', () => {
-  console.log('New client connected to database');
+pool.on("connect", () => {
+  console.log("New client connected to database");
 });
 
 export async function getClient() {
-  const client = await pool.connect() as ExtendedPoolClient;
+  const client = (await pool.connect()) as ExtendedPoolClient;
   const query = client.query;
   const release = client.release;
 
   const timeout = setTimeout(() => {
-    console.error('A client has been checked out for too long.');
-    console.error(`The last executed query on this client was: ${client.lastQuery}`);
+    console.error("A client has been checked out for too long.");
+    console.error(
+      `The last executed query on this client was: ${client.lastQuery}`,
+    );
   }, 5000);
 
-  client.query = function (this: PoolClient, ...args: Parameters<typeof query>) {
+  client.query = function (
+    this: PoolClient,
+    ...args: Parameters<typeof query>
+  ) {
     client.lastQuery = args;
     return query.apply(this, args);
   } as typeof client.query;

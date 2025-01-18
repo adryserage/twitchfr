@@ -1,13 +1,13 @@
--- Drop existing table if it exists
-DROP TABLE IF EXISTS streamers;
-
--- Create streamers table with only static columns
-CREATE TABLE streamers (
+CREATE TABLE IF NOT EXISTS streamers (
     id VARCHAR(50) PRIMARY KEY,
     login VARCHAR(100) NOT NULL,
     display_name VARCHAR(100) NOT NULL,
     profile_image_url TEXT,
-    added_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    is_live BOOLEAN DEFAULT false,
+    title TEXT,
+    game_name VARCHAR(100),
+    viewer_count INTEGER,
+    started_at TIMESTAMP WITH TIME ZONE,
     last_live_check TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
