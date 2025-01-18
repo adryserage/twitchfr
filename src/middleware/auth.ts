@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 const API_SECRET = process.env.API_SECRET;
 
 // Generate a secure session token
-export function generateSessionToken() {
+export function generateSessionToken(): string {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 }
 

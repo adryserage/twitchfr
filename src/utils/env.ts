@@ -1,4 +1,7 @@
-export function validateEnv() {
+export function validateEnv(): {
+  TWITCH_CLIENT_ID: string | undefined;
+  TWITCH_CLIENT_SECRET: string | undefined;
+} {
   const requiredEnvVars = {
     TWITCH_CLIENT_ID: process.env.TWITCH_CLIENT_ID,
     TWITCH_CLIENT_SECRET: process.env.TWITCH_CLIENT_SECRET,

@@ -18,19 +18,19 @@ export async function GET() {
   try {
     // Get fresh data from the database
     const streamers = await streamerService.getStreamers();
-    
+
     // Update cache for future requests
     await getCachedStreamers(async () => streamers);
-    
+
     // Set cache control headers
     return NextResponse.json(
       { streamers },
       {
         headers: {
-          'Cache-Control': 'no-store, must-revalidate',
-          'Pragma': 'no-cache',
+          "Cache-Control": "no-store, must-revalidate",
+          Pragma: "no-cache",
         },
-      }
+      },
     );
   } catch (error) {
     console.error("Error fetching streamers:", error);
@@ -72,10 +72,7 @@ export async function POST(request: NextRequest) {
       login: userData.name,
       displayName: userData.displayName,
       profileImageUrl: userData.profilePictureUrl,
-      lastLiveCheck: new Date(),
-      updatedAt: new Date(),
-      addedAt: new Date(),
-      isLive: false
+      isLive: false,
     };
 
     // Save to database

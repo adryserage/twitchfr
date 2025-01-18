@@ -26,9 +26,9 @@ export async function GET() {
         details:
           error instanceof Error ? error.message : "Unknown error occurred",
       } satisfies ErrorResponse,
-        { status: 500 },
-      );
-    }
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(request: Request) {
@@ -77,11 +77,19 @@ export async function POST(request: Request) {
           // Record the API call after successful fetch
           rateLimiter.recordCall(normalizedUsername);
 
+          const stream = await client.streams.getStreamByUserId(user.id);
+          console.log(`Found streamer: ${user.displayName}, Live: ${!!stream}`);
+
           return {
             id: user.id,
             login: user.name,
             displayName: user.displayName,
             profileImageUrl: user.profilePictureUrl,
+            isLive: !!stream,
+            title: stream?.title || "",
+            gameName: stream?.gameName || "",
+            viewerCount: stream?.viewers || 0,
+            startedAt: stream?.startDate?.toISOString() || "",
           };
         },
       );

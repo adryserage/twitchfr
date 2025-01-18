@@ -50,7 +50,7 @@ class Cache<T> {
     if (pending) return pending;
 
     // Create new request
-    const promise = (async () => {
+    const promise = (async (): Promise<T> => {
       try {
         const value = await fetchFn();
         this.set(key, value);

@@ -3,7 +3,7 @@ import { streamerCache } from "./cache";
 
 let isInitialized = false;
 
-export const initializeTwitchApi = async () => {
+export const initializeTwitchApi = async (): Promise<void> => {
   try {
     const response = await fetch("/api/twitch");
     if (!response.ok) {
